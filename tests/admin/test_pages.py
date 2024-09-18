@@ -78,7 +78,7 @@ def test_previewing_page_with_format_works():
 def test_pages_with_link_target():
     """Test that target=_blank links show in public interface"""
     ## TODO: Replace back to DEFAULT_THEME (aka core) in CTFd 4.0
-    app = create_ctfd(ctf_theme="core-beta")
+    app = create_ctfd(ctf_theme="sepro")
     with app.app_context():
         gen_page(
             app.db,
