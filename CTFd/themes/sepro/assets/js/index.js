@@ -10,17 +10,11 @@ import highlight from "./theme/highlight";
 import alerts from "./utils/alerts";
 import tooltips from "./utils/tooltips";
 import collapse from "./utils/collapse";
+import initTabs from "./utils/tabs";
 
 import eventAlerts from "./utils/notifications/alerts";
 import eventToasts from "./utils/notifications/toasts";
 import eventRead from "./utils/notifications/read";
-
-import * as mdb from 'mdb-ui-kit'; // lib
-window.mdb = mdb;
-
-import { Dropdown, Collapse, initMDB } from "mdb-ui-kit";
-
-initMDB({ Dropdown, Collapse });
 
 dayjs.extend(advancedFormat);
 CTFd.init(window.init);
@@ -33,6 +27,7 @@ CTFd.init(window.init);
   alerts();
   tooltips();
   collapse();
+  initTabs();
 
   eventRead();
   eventAlerts();

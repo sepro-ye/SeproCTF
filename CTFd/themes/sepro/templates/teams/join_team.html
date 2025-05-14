@@ -1,36 +1,49 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="jumbotron">
-    <div class="container">
-      <h1>{% trans %}Join Team{% endtrans %}</h1>
+  <div class="bg-gradient-to-b from-cyan-800 to-cyan-600 py-16">
+    <div class="container mx-auto px-6">
+      <h1 class="text-4xl font-bold text-white">
+        {% trans %}Join Team{% endtrans %}
+      </h1>
     </div>
   </div>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-8 col-lg-6 offset-md-2 offset-lg-3">
-        {% include "components/errors.html" %}
 
-        {% with form = Forms.teams.TeamJoinForm() %}
-          <form method="POST">
-            <div class="mb-3">
-              {{ form.name.label(class="form-label") }}
-              {{ form.name(class="form-control") }}
-            </div>
+  <div class="container mx-auto px-6 py-8">
+    <div class="max-w-md mx-auto">
+      <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
+        <div class="p-6">
+          {% include "components/errors.html" %}
 
-            <div class="mb-3">
-              {{ form.password.label(class="form-label") }}
-              {{ form.password(class="form-control") }}
-            </div>
-
-            <div class="row pt-3">
-              <div class="col-md-12">
-                {{ form.submit(class="btn btn-success float-end px-4") }}
+          {% with form = Forms.teams.TeamJoinForm() %}
+            <form method="POST">
+              <div class="mb-5">
+                <label for="{{ form.name.id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ form.name.label.text }}</label>
+                {{ form.name(class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition duration-200") }}
               </div>
-            </div>
-            {{ form.nonce() }}
-          </form>
-        {% endwith %}
+
+              <div class="mb-5">
+                <label for="{{ form.password.id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ form.password.label.text }}</label>
+                {{ form.password(class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition duration-200") }}
+              </div>
+
+              <div class="mt-8 flex justify-end">
+                {{ form.submit(class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow-sm transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500") }}
+              </div>
+              
+              {{ form.nonce() }}
+            </form>
+          {% endwith %}
+          
+          <div class="mt-6 pt-5 border-t border-gray-200 dark:border-gray-700 text-center">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              {% trans %}Don't have a team yet?{% endtrans %}
+              <a href="{{ url_for('teams.new') }}" class="font-medium text-cyan-600 hover:text-cyan-500 dark:text-cyan-400 dark:hover:text-cyan-300">
+                {% trans %}Create a team{% endtrans %}
+              </a>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </div>

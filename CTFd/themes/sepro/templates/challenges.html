@@ -1,19 +1,86 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="jumbotron">
-    <div class="container">
-      <h1>
-        {% trans %}Challenges{% endtrans %}
-      </h1>
+<div class="relative pt-24 pb-16 overflow-hidden min-h-screen">
+    <!-- Background elements and decorations -->
+  <div class="absolute inset-0 bg-cyber-grid opacity-10 z-0"></div>
+  <div class="absolute inset-0 bg-gradient-to-br from-dark-950/30 to-dark-900/90 z-0"></div>
+  
+  <!-- Digital circuit lines -->
+  <div class="absolute inset-0 z-0">
+    <div class="security-line w-1/3 left-0 top-1/4"></div>
+    <div class="security-line w-1/4 right-0 top-1/3"></div>
+    <div class="security-line-v h-1/3 left-1/4 top-0"></div>
+    <div class="security-line-v h-1/4 right-1/3 bottom-0"></div>
+  </div>
+  
+
+
+    <!-- Hero Header -->
+  <div class="relative container mx-auto bg-gradient-to-br from-primary-900 to-dark-900 text-white py-24 px-4 rounded-xl shadow-2xl mb-12  relative overflow-hidden border border-primary-900/50">
+    <div class="absolute inset-0 bg-cyber-grid opacity-10"></div>
+    <!-- Security decorative elements -->
+    <div class="absolute inset-0 opacity-20">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="none" width="100%" height="100%" 
+           style="opacity: 0.07; stroke: #10b981; stroke-width: 0.5; fill: none">
+        <path d="M0,500 L1000,500 M500,0 L500,1000" />
+        <circle cx="500" cy="500" r="200" />
+        <circle cx="500" cy="500" r="400" />
+        <path d="M300,300 Q400,100 500,300 T700,300" />
+        <path d="M300,700 Q400,900 500,700 T700,700" />
+      </svg>
+    </div>
+    
+    <!-- Digital circuit lines -->
+    <div class="security-line w-1/3 left-0 top-1/4"></div>
+    <div class="security-line w-1/4 right-0 top-1/3"></div>
+    <div class="security-line-v h-1/3 left-1/4 top-0"></div>
+    <div class="security-line-v h-1/4 right-1/3 bottom-0"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+        <div>
+          <div class="inline-flex items-center px-3 py-1 rounded-full bg-primary-900/60 text-primary-400 text-xs font-semibold border border-primary-700 mb-4 shadow-glow security-badge">
+            <i class="fas fa-shield-alt mr-1"></i> SECURITY SERVICES
+          </div>
+          <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 flex items-center">
+            {% trans %}Advanced Protection{% endtrans %}
+            <div class="ml-3 w-3 h-3 rounded-full bg-primary-500 animate-pulse"></div>
+          </h1>
+          <p class="text-white text-opacity-90 max-w-2xl text-lg">
+            Enterprise-grade security solutions designed to protect your business from evolving cyber threats. Comprehensive protection for your digital assets.
+          </p>            <div class="mt-6 flex flex-wrap gap-4 items-center">
+              <div class="inline-flex items-center bg-gray-800/50 px-3 py-2 rounded-lg text-sm border border-gray-700">
+                <i class="fas fa-book mr-2 text-primary-400"></i>
+                <span class="text-gray-300">{{ count_challenges() if count_challenges is defined else 0 }} Challenges Available</span>
+              </div>
+              <div class="inline-flex items-center bg-gray-800/50 px-3 py-2 rounded-lg text-sm border border-gray-700">
+                <i class="fas fa-user-check mr-2 text-primary-400"></i>
+                <span class="text-gray-300">{{ count_solves() if count_solves is defined else 0 }} Total Solves</span>
+              </div>
+            </div>
+        </div>
+        
+        <div class="mt-8 md:mt-0">
+          <div class="flex flex-col bg-gray-800/40 backdrop-blur-sm p-4 rounded-lg border border-gray-700 shadow-lg min-w-[180px]">
+            <div class="text-sm text-gray-400 mb-1">YOUR SCORE</div>
+            <div class="text-3xl font-bold text-white mb-2">{{ score|default(0) }}</div>
+            <div class="w-full bg-gray-700 h-1.5 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-primary-500 to-primary-400 h-full rounded-full" style="width: '{{ (score|default(0) / 10000) * 100 }}%'"></div>
+            </div>
+            <div class="mt-2 text-xs text-gray-400 flex justify-between">
+              <span>0</span>
+              <span>10000</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        {% include "components/errors.html" %}
-      </div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="mb-8">
+      {% include "components/errors.html" %}
     </div>
 
     <div 
@@ -21,50 +88,121 @@
       @load-challenges.window="loadChallenges()" 
       @load-challenge.window="loadChallenge($event.detail)"
     >
+      <!-- Challenge Modal -->
       <div
-          x-ref="challengeWindow" id="challenge-window" class="modal fade" tabindex="-1" role="dialog" x-data=""
-          x-html="$store.challenge.data.view"
+        x-ref="challengeWindow" 
+        id="challenge-window" 
+        class="fixed inset-0 z-50 overflow-y-auto hidden bg-black/50 backdrop-blur-sm"
+        aria-modal="true" 
+        role="dialog"
+        x-data=""
+        x-html="$store.challenge.data.view"
       ></div>
 
-      <div x-show="!loaded">
-        <div class="min-vh-50 d-flex align-items-center">
-          <div class="text-center w-100">
-            <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
-          </div>
+      <!-- Loading State -->
+      <div x-show="!loaded" class="min-h-[50vh] flex items-center justify-center">
+        <div class="text-center">
+          <svg class="animate-spin h-12 w-12 text-indigo-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <p class="mt-4 text-lg text-gray-700">Loading challenges...</p>
         </div>
       </div>
 
-      <div x-show="loaded">
+      <!-- Challenges List -->
+      <div x-show="loaded" class="space-y-12">
         <template x-for="(category, idx) in getCategories()" :key="idx">
-          <div class="pt-5">
-            <div class="category-header mb-3">
-              <h3 x-text="category"></h3>
+          <div>
+            <!-- Category Header -->
+            <div class="mb-6 pb-2 flex items-center space-x-2">
+              <h3 class="text-2xl font-bold text-slate-800 border-b-4 border-primary-500 pb-1 inline-block" x-text="category"></h3>
+              <div class="h-px flex-grow bg-gradient-to-r from-slate-200 to-transparent"></div>
             </div>
 
-            <div class="category-challenges d-flex flex-column">
-              <div class="challenges-row row">
-                <template x-for="(c, idx) in getChallenges(category)" :key="c.id">
-                  <div class="col-sm-6 col-md-4 col-lg-3">
-                    <button
-                        class="challenge-button btn btn-dark w-100 text-truncate my-3"
-                        :class="c.solved_by_me ? 'challenge-solved' : ''"
-                        :value="c.id" @click="loadChallenge(c.id)"
-                    >
-
-                      <div class="challenge-inner my-3">
-                        <p x-text="c.name"></p>
-                        <span x-text="c.value"></span>
+            <!-- Challenge Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              <template x-for="(c, idx) in getChallenges(category)" :key="c.id">
+                <div>
+                  <button
+                    class="group w-full h-full rounded-xl border transition-all duration-300 transform hover:scale-102 overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                    :class="c.solved_by_me ? 
+                      'bg-gradient-to-br from-secondary-500 to-secondary-600 text-white border-secondary-400 shadow-md shadow-secondary-500/20' : 
+                      'bg-white hover:bg-slate-50 text-slate-800 border-slate-200 shadow-lg hover:shadow-xl'"
+                    :value="c.id" 
+                    @click="loadChallenge(c.id)"
+                  >
+                    <div class="relative p-6 h-full">
+                      <!-- Category tag -->
+                      <div class="absolute top-3 left-3">
+                        <span 
+                          class="px-2 py-1 text-xs font-medium rounded-md"
+                          :class="c.solved_by_me ? 'bg-white/20 text-white' : 'bg-primary-100 text-primary-800'"
+                          x-text="c.category">
+                        </span>
                       </div>
-                    </button>
-                  </div>
-                </template>
-              </div>
+                      
+                      <!-- Solved indicator -->
+                      <div x-show="c.solved_by_me" class="absolute top-3 right-3">
+                        <svg class="h-6 w-6 text-white drop-shadow-sm" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      
+                      <div class="flex flex-col items-center mt-5">
+                        <!-- Challenge name -->
+                        <h4 class="text-xl font-medium mb-4 text-center group-hover:text-primary-700 transition-colors" x-text="c.name"></h4>
+                        
+                        <div class="flex items-center space-x-3">
+                          <!-- Points badge -->
+                          <span 
+                            class="px-3 py-1 rounded-full text-sm font-semibold flex items-center"
+                            :class="c.solved_by_me ? 'bg-white/20 text-white' : 'bg-primary-600 text-white'"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span x-text="c.value + ' pts'"></span>
+                          </span>
+                          
+                          <!-- Solves count -->
+                          <span 
+                            class="px-3 py-1 rounded-full text-sm font-semibold flex items-center"
+                            :class="c.solved_by_me ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            <span x-text="c.solves || '0'"></span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </template>
             </div>
           </div>
         </template>
       </div>
     </div>
   </div>
+  
+  <!-- Call to Action Section -->
+  <div class="relative bg-gradient-to-br from-primary-900 to-dark-900 rounded-xl shadow-2xl p-8 mx-auto max-w-4xl border border-primary-800/50 mb-16 mt-12">
+    <div class="flex flex-col md:flex-row items-center justify-between">
+      <div class="mb-6 md:mb-0 md:mr-6">
+        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Ready to secure your business?</h2>
+        <p class="text-primary-200">Book a consultation with our security experts today</p>
+      </div>
+      <div>
+        <a href="#contact" class="bg-white hover:bg-gray-100 text-primary-700 font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-primary-500/20 transition-all duration-300">
+          Get Started Now
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}

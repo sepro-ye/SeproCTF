@@ -1,5 +1,5 @@
 import Alpine from "alpinejs";
-import { Toast } from "bootstrap";
+import { Toast } from "../toast";
 import CTFd from "../../index";
 
 export default () => {

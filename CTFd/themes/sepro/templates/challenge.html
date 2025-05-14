@@ -1,227 +1,286 @@
-<div :class="getStyles()" role="document" x-data="Challenge" x-init="id = {{ challenge.id }}; max_attempts = {{ max_attempts }}; attempts = {{ attempts }}">
-  <div class="modal-content">
-    <div class="modal-body py-4 px-4 px-sm-5">
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" x-data="Challenge" x-init="id = {{ challenge.id }}; max_attempts = {{ max_attempts }}; attempts = {{ attempts }}">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeModal()"></div>
+  
+  <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden">
+    <!-- Header -->
+    <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ challenge.name }}</h2>
+      <button type="button" @click="closeModal()" class="text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
 
-      <div>
-        <button type="button" class="btn-close float-end" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Tab Navigation -->
+    <div class="border-b border-gray-200 dark:border-gray-700 px-6">
+      <div class="flex space-x-8">
+        <button 
+          @click="activeTab = 'challenge'" 
+          :class="{'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400': activeTab === 'challenge', 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300': activeTab !== 'challenge'}" 
+          class="py-4 px-1 font-medium text-sm transition-colors"
+        >
+          {% trans %}Challenge{% endtrans %}
+        </button>
 
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <button class="nav-link active" data-bs-target="#challenge" @click="showChallenge()">
-              {% trans %}Challenge{% endtrans %}
-            </button>
-          </li>
-
-          {% block solves %}
-            <li class="nav-item">
-              <button class="nav-link challenge-solves" data-bs-target="#solves" @click="showSolves()">
-                {% if solves != None %}
-                  {{ ngettext("%(num)d Solve", "%(num)d Solves", solves) }}
-                {% endif %}
-              </button>
-            </li>
-          {% endblock %}
-        </ul>
+        {% block solves %}
+        <button 
+          @click="showSolves(); activeTab = 'solves'" 
+          :class="{'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400': activeTab === 'solves', 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300': activeTab !== 'solves'}" 
+          class="py-4 px-1 font-medium text-sm transition-colors"
+        >
+          {% if solves != None %}
+            {{ ngettext("%(num)d Solve", "%(num)d Solves", solves) }}
+          {% endif %}
+        </button>
+        {% endblock %}
       </div>
+    </div>
 
-      <div>
-        <div class="tab-content">
-          <div role="tabpanel" class="tab-pane fade show active" id="challenge">
-            <h2 class="challenge-name text-center pt-3">
-              {{ challenge.name }}
-            </h2>
-            <h3 class="challenge-value text-center">
-              {{ challenge.value }}
-            </h3>
+    <!-- Content Area -->
+    <div class="p-6 overflow-y-auto" style="max-height: calc(90vh - 150px);">
+      <!-- Challenge Tab -->
+      <div x-show="activeTab === 'challenge' || !activeTab" class="space-y-6">
+        <!-- Challenge Value -->
+        <div class="flex justify-center">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+            {{ challenge.value }}
+          </span>
+        </div>
 
-
-            {% if tags %}
-              <div class="challenge-tags text-center pt-2 pb-3">
-                {% block tags %}
-                  {% for tag in tags %}
-                    <span class="challenge-tag badge bg-info">{{ tag }}</span>
-                  {% endfor %}
-                {% endblock %}
-              </div>
-            {% endif %}
-
-            <small class="challenge-attribution text-center text-muted">
-              {% block attribution %}{{ challenge.byline }}{% endblock %}
-            </small>
-
-            <span class="challenge-desc">{% block description %}{{ challenge.html }}{% endblock %}</span>
-
-            {% if challenge.connection_info %}
-              <div class="mb-2">
-                <span class="challenge-connection-info">
-                  {% block connection_info %}
-                    {% set conn = challenge.connection_info %}
-                    {% if not conn %}
-                    {% elif conn.startswith("http") %}
-                      {{ conn | urlize(target="_blank") }}
-                    {% else %}
-                      <code>{{ conn }}</code>
-                    {% endif %}
-                  {% endblock %}
-                </span>
-              </div>
-            {% endif %}
-
-            {% if hints %}
-              <div class="challenge-hints hint-row row">
-                <div class="col-12 mb-3">
-                {% for hint in hints | sort(attribute="cost") %}
-                  <div x-data="Hint" x-init="id = {{ hint.id }}">
-                    {% if hint.content %}
-                    <details>
-                      <summary>{% trans %}View Hint{% endtrans %}</summary>
-                      <div>{{ hint.html | safe }}</div>
-                    </details>
-                    {% else %}
-                    <details @toggle="showHint(event)">
-                      <summary>Unlock Hint for {{ hint.cost }} point{{ hint.cost|pluralize }}</summary>
-                      <div x-html="html"></div>
-                    </details>
-                    {% endif %}
-                  </div>
-                {% endfor %}
-                </div>
-              </div>
-            {% endif %}
-
-            {% if files %}
-              <div class="row challenge-files text-center pb-3">
-                {% for file in files %}
-                  <div class="col-md-4 col-sm-4 col-xs-12 file-button-wrapper d-block">
-                    {% set segments = file.split('/') %}
-                    {% set token = file.split('?') | last %}
-                    {% if token %}
-                      {% set filename = segments | last | replace("?" + token, "") %}
-                    {% else %}
-                      {% set filename = segments | last %}
-                    {% endif %}
-                    <a
-                        class="btn btn-info btn-file mb-1 d-inline-block px-2 w-100 text-truncate"
-                        href="{{ file }}"
-                        title="{{ filename }}"
-                    >
-                      <i class="fas fa-download"></i>
-                      <small>
-                        {{ filename }}
-                      </small>
-                    </a>
-                  </div>
-                {% endfor %}
-              </div>
-            {% endif %}
-
-            <template x-if="max_attempts > 0">
-              <p class="text-center">
-                <span x-text="attempts"></span>/<span x-text="max_attempts"></span> {% trans c=max_attempts %}attempt{% pluralize %}attempts{% endtrans %}
-              </p>
-            </template>
-
-            <div class="row submit-row">
-              <div class="col-12 col-sm-8">
-                {% block input %}
-                  <input
-                      id="challenge-id" class="challenge-id" type="hidden"
-                      value="{{ challenge.id }}"
-                  >
-                  <input
-                      id="challenge-input" class="challenge-input form-control"
-                      type="text" name="submission"
-                      @keyup.enter="submitChallenge()"
-                      placeholder="{% trans %}Flag{% endtrans %}" x-model="submission"
-                  >
-                {% endblock %}
-              </div>
-
-              <div class="col-12 col-sm-4 mt-3 mt-sm-0 key-submit">
-                {% block submit %}
-                  <button
-                      id="challenge-submit"
-                      class="challenge-submit btn btn-outline-secondary w-100 h-100" type="submit"
-                      @click.debounce.500ms="submitChallenge()"
-                  >
-                    {% trans %}Submit{% endtrans %}
-                  </button>
-                {% endblock %}
-              </div>
-            </div>
-
-            <div class="row notification-row">
-              <div class="col-12">
-                <template x-if="response">
-                  {# This alert is re-used for all alerts, so it's important not to make it dismissible #}
-                  <div class="alert text-center w-100 mt-3"
-                      :class="{
-                        'alert-success': response.data.status == 'correct',
-                        'alert-info': response.data.status == 'already_solved',
-                        'alert-danger': response.data.status == 'incorrect',
-                        'alert-warning': response.data.status == 'paused',
-                      }" role="alert"
-                  >
-                    <strong x-text="response.data.message"></strong>
-                    <div x-show="(response.data.status == 'correct' || response.data.status == 'already_solved')">
-                      <div x-show="getNextId()">
-                        <button @click="nextChallenge()" class="btn btn-info mt-3">
-                          {% trans %}Next Challenge{% endtrans %}
-                        </button>
-                      </div>
-                      {% if Configs.social_shares %}
-                      <div>
-                        <button x-show="!share_url" @click="getShareUrl()" class="btn btn-sm btn-outline-info mt-3">
-                          {% trans %}Share{% endtrans %}
-                        </button>
-                        <div class="btn-group mt-3" role="group" x-show="share_url">
-                          <button type="button" class="btn btn-sm btn-outline-secondary" @click="copyShareUrl()" data-bs-toggle="tooltip" data-bs-title="Copied!">
-                            <i class="fa-solid fa-copy"></i>
-                          </button>
-                          <a :href="'https://twitter.com/intent/tweet?url=' + encodeURIComponent(share_url)" role="button" class="btn btn-sm btn-outline-secondary" target="_blank">
-                            <i class="fa-brands fa-twitter"></i>
-                          </a>
-                          <a :href="'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(share_url)" role="button" class="btn btn-sm btn-outline-secondary" target="_blank">
-                            <i class="fa-brands fa-facebook-f"></i>
-                          </a>
-                          <a :href="'http://www.linkedin.com/shareArticle?url=' + encodeURIComponent(share_url)" role="button" class="btn btn-sm btn-outline-secondary" target="_blank">
-                            <i class="fa-brands fa-linkedin-in"></i>
-                          </a>
-                        </div>
-                      </div>
-                      {% endif %}
-                    </div>
-                  </div>
-                </template>
-              </div>
-            </div>
+        <!-- Challenge Tags -->
+        {% if tags %}
+          <div class="flex flex-wrap justify-center gap-2">
+            {% block tags %}
+              {% for tag in tags %}
+                <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">{{ tag }}</span>
+              {% endfor %}
+            {% endblock %}
           </div>
+        {% endif %}
 
-          <div role="tabpanel" class="tab-pane fade" id="solves">
-            <div class="row">
-              <div class="col-md-12">
-                <table class="table table-striped align-middle text-center">
-                  <thead>
-                  <tr>
-                    <th>{% trans %}Name{% endtrans %}</th>
-                    <th>{% trans %}Date{% endtrans %}</th>
-                  </tr>
-                  </thead>
-                  <tbody id="challenge-solves-names">
-                  <template x-for="solve in solves">
-                    <tr>
-                      <td>
-                        <a :href="solve.account_url" x-text="solve.name"></a>
-                      </td>
-                      <td x-text="solve.date"></td>
-                    </tr>
-                  </template>
-                  </tbody>
-                </table>
+        <!-- Challenge Attribution -->
+        {% if challenge.byline %}
+        <div class="text-center text-sm text-gray-500 dark:text-gray-400">
+          {% block attribution %}{{ challenge.byline }}{% endblock %}
+        </div>
+        {% endif %}
+
+        <!-- Challenge Description -->
+        <div class="prose dark:prose-invert max-w-none">
+          {% block description %}{{ challenge.html }}{% endblock %}
+        </div>
+
+        <!-- Connection Info -->
+        {% if challenge.connection_info %}
+          <div class="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+            <span class="block">
+              {% block connection_info %}
+                {% set conn = challenge.connection_info %}
+                {% if not conn %}
+                {% elif conn.startswith("http") %}
+                  {{ conn | urlize(target="_blank") }}
+                {% else %}
+                  <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono">{{ conn }}</code>
+                {% endif %}
+              {% endblock %}
+            </span>
+          </div>
+        {% endif %}
+
+        <!-- Hints -->
+        {% if hints %}
+          <div class="space-y-3">
+            {% for hint in hints | sort(attribute="cost") %}
+              <div x-data="Hint" x-init="id = {{ hint.id }}">
+                {% if hint.content %}
+                <details class="group bg-gray-50 dark:bg-gray-900 rounded-lg overflow-hidden">
+                  <summary class="p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center">
+                    <svg class="h-5 w-5 mr-2 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="font-medium">{% trans %}View Hint{% endtrans %}</span>
+                    <svg class="ml-auto h-5 w-5 text-gray-500 group-open:rotate-180 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <div class="p-3 border-t border-gray-200 dark:border-gray-700 prose dark:prose-invert max-w-none">
+                    {{ hint.html | safe }}
+                  </div>
+                </details>
+                {% else %}
+                <details @toggle="showHint(event)" class="group bg-gray-50 dark:bg-gray-900 rounded-lg overflow-hidden">
+                  <summary class="p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center">
+                    <svg class="h-5 w-5 mr-2 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <span class="font-medium">Unlock Hint for {{ hint.cost }} point{{ hint.cost|pluralize }}</span>
+                    <svg class="ml-auto h-5 w-5 text-gray-500 group-open:rotate-180 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </summary>
+                  <div class="p-3 border-t border-gray-200 dark:border-gray-700 prose dark:prose-invert max-w-none" x-html="html"></div>
+                </details>
+                {% endif %}
               </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Files -->
+        {% if files %}
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {% for file in files %}
+              {% set segments = file.split('/') %}
+              {% set token = file.split('?') | last %}
+              {% if token %}
+                {% set filename = segments | last | replace("?" + token, "") %}
+              {% else %}
+                {% set filename = segments | last %}
+              {% endif %}
+              <a
+                class="flex items-center p-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors group"
+                href="{{ file }}"
+                title="{{ filename }}"
+                download
+              >
+                <svg class="h-5 w-5 text-blue-500 mr-2 group-hover:text-blue-600 transition-colors" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span class="text-sm truncate group-hover:text-blue-600 transition-colors">{{ filename }}</span>
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Attempts counter -->
+        <template x-if="max_attempts > 0">
+          <div class="text-center text-sm text-gray-500 dark:text-gray-400">
+            <span x-text="attempts"></span>/<span x-text="max_attempts"></span> {% trans c=max_attempts %}attempt{% pluralize %}attempts{% endtrans %}
+          </div>
+        </template>
+
+        <!-- Flag Submission Form -->
+        <div>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <div class="flex-grow">
+              <input
+                id="challenge-id" 
+                type="hidden"
+                value="{{ challenge.id }}"
+              >
+              <input
+                id="challenge-input"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+                type="text"
+                name="submission"
+                @keyup.enter="submitChallenge()"
+                placeholder="{% trans %}Flag{% endtrans %}"
+                x-model="submission"
+              >
             </div>
+            <button
+              id="challenge-submit"
+              class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              type="submit"
+              @click.debounce.500ms="submitChallenge()"
+            >
+              {% trans %}Submit{% endtrans %}
+            </button>
           </div>
         </div>
+
+        <!-- Response Messages -->
+        <div>
+          <template x-if="response">
+            <div class="p-4 rounded-lg text-center"
+                :class="{
+                  'bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400': response.data.status == 'correct',
+                  'bg-blue-100 text-blue-800 dark:bg-blue-800/20 dark:text-blue-400': response.data.status == 'already_solved',
+                  'bg-red-100 text-red-800 dark:bg-red-800/20 dark:text-red-400': response.data.status == 'incorrect',
+                  'bg-amber-100 text-amber-800 dark:bg-amber-800/20 dark:text-amber-400': response.data.status == 'paused',
+                }"
+            >
+              <strong x-text="response.data.message"></strong>
+              
+              <!-- Next Challenge & Share options -->
+              <div x-show="(response.data.status == 'correct' || response.data.status == 'already_solved')" class="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button 
+                  x-show="getNextId()" 
+                  @click="nextChallenge()" 
+                  class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  {% trans %}Next Challenge{% endtrans %}
+                </button>
+                
+                {% if Configs.social_shares %}
+                <div x-show="!share_url" class="inline-block">
+                  <button 
+                    @click="getShareUrl()" 
+                    class="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    {% trans %}Share{% endtrans %}
+                  </button>
+                </div>
+                
+                <div x-show="share_url" class="flex items-center space-x-2">
+                  <div class="relative flex">
+                    <input 
+                      type="text" 
+                      :value="share_url" 
+                      readonly 
+                      class="w-48 sm:w-60 pr-10 pl-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-lg dark:bg-gray-800 dark:text-white"
+                    >
+                    <button 
+                      @click="copyShareUrl()" 
+                      class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                      x-tooltip="'Copied!'"
+                    >
+                      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a3 3 0 003-3v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  <div class="flex space-x-2">
+                    <a :href="'https://twitter.com/intent/tweet?url=' + encodeURIComponent(share_url)" class="p-2 text-blue-400 hover:text-blue-500 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 rounded-full transition-colors" target="_blank" title="Share on Twitter">
+                      <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+                    </a>
+                    <a :href="'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(share_url)" class="p-2 text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 rounded-full transition-colors" target="_blank" title="Share on Facebook">
+                      <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"></path></svg>
+                    </a>
+                    <a :href="'http://www.linkedin.com/shareArticle?url=' + encodeURIComponent(share_url)" class="p-2 text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 rounded-full transition-colors" target="_blank" title="Share on LinkedIn">
+                      <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg>
+                    </a>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Solves Tab -->
+      <div x-show="activeTab === 'solves'" class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead class="bg-gray-50 dark:bg-gray-900">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{% trans %}Name{% endtrans %}</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{% trans %}Date{% endtrans %}</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <template x-for="solve in solves" :key="solve.account_id">
+              <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                  <a :href="solve.account_url" x-text="solve.name" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"></a>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400" x-text="solve.date"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>

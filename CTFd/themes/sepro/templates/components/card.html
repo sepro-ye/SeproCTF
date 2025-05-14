@@ -1,0 +1,18 @@
+<!-- filepath: CTFd/themes/sepro/templates/components/card.html -->
+<div class="bg-white rounded-xl shadow-md border border-slate-100 overflow-hidden {{ class }}">
+  {% if header %}
+    <div class="bg-slate-50 p-4 border-b border-slate-200">
+      <div class="font-medium text-slate-800">{{ header }}</div>
+    </div>
+  {% endif %}
+  
+  <div class="p-6">
+    {{ body }}
+  </div>
+  
+  {% if footer %}
+    <div class="bg-slate-50 p-4 border-t border-slate-200">
+      {{ footer }}
+    </div>
+  {% endif %}
+</div>

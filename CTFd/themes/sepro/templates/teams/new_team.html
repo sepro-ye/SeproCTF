@@ -1,40 +1,49 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="jumbotron">
-    <div class="container">
-      <h1>{% trans %}Create Team{% endtrans %}</h1>
+  <div class="bg-gradient-to-b from-cyan-800 to-cyan-600 py-16">
+    <div class="container mx-auto px-6">
+      <h1 class="text-4xl font-bold text-white">
+        {% trans %}Create Team{% endtrans %}
+      </h1>
     </div>
   </div>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6 offset-md-3">
-        {% include "components/errors.html" %}
 
-        {% with form = Forms.teams.TeamRegisterForm() %}
-          {% from "macros/forms.html" import render_extra_fields %}
-          <form method="POST">
-            <div class="mb-3">
-              <b>{{ form.name.label(class="form-label") }}</b>
-              {{ form.name(class="form-control") }}
-            </div>
-            <div class="mb-3">
-              <b>{{ form.password.label(class="form-label") }}</b>
-              {{ form.password(class="form-control") }}
-            </div>
+  <div class="container mx-auto px-6 py-8">
+    <div class="max-w-md mx-auto">
+      <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
+        <div class="p-6">
+          {% include "components/errors.html" %}
 
-            {{ render_extra_fields(form.extra) }}
-
-            <div class="row ">
-              <div class="col-md-12">
-                <p>After creating your team, share the team name and password with your teammates so they can join your
-                  team.</p>
-                {{ form.submit(class="btn btn-success float-end px-4") }}
+          {% with form = Forms.teams.TeamRegisterForm() %}
+            {% from "macros/forms.html" import render_extra_fields %}
+            <form method="POST">
+              <div class="mb-5">
+                <label for="{{ form.name.id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ form.name.label.text }}</label>
+                {{ form.name(class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition duration-200") }}
               </div>
-            </div>
-            {{ form.nonce() }}
-          </form>
-        {% endwith %}
+              
+              <div class="mb-5">
+                <label for="{{ form.password.id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ form.password.label.text }}</label>
+                {{ form.password(class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition duration-200") }}
+              </div>
+
+              {{ render_extra_fields(form.extra) }}
+
+              <div class="mt-6 mb-4">
+                <div class="p-4 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 dark:border-blue-600 text-blue-700 dark:text-blue-200 rounded-md">
+                  <p>{% trans %}After creating your team, share the team name and password with your teammates so they can join your team.{% endtrans %}</p>
+                </div>
+              </div>
+
+              <div class="mt-8 flex justify-end">
+                {{ form.submit(class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md shadow-sm transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500") }}
+              </div>
+              
+              {{ form.nonce() }}
+            </form>
+          {% endwith %}
+        </div>
       </div>
     </div>
   </div>

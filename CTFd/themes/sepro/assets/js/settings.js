@@ -1,5 +1,5 @@
 import Alpine from "alpinejs";
-import { Modal } from "bootstrap";
+import { Modal } from "./utils/modal";
 import { serializeJSON } from "@ctfdio/ctfd-js/forms";
 
 import CTFd from "./index";

@@ -1,54 +1,158 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="jumbotron">
-    <div class="container">
-      <h1>
-        {% trans %}Login{% endtrans %}
+  <!-- Hero Header -->
+  <div class="bg-gradient-to-br from-primary-900 to-dark-900 py-20 px-4 relative overflow-hidden">
+    <div class="absolute inset-0 bg-cyber-grid opacity-10"></div>
+    <!-- Security decorative elements -->
+    <div class="absolute inset-0 opacity-20">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="none" width="100%" height="100%" 
+           style="opacity: 0.07; stroke: #10b981; stroke-width: 0.5; fill: none">
+        <path d="M0,500 L1000,500 M500,0 L500,1000" />
+        <circle cx="500" cy="500" r="200" />
+        <circle cx="500" cy="500" r="400" />
+        <path d="M300,300 Q400,100 500,300 T700,300" />
+        <path d="M300,700 Q400,900 500,700 T700,700" />
+      </svg>
+    </div>
+    
+    <!-- Digital circuit lines -->
+    <div class="security-line w-1/3 left-0 top-1/4"></div>
+    <div class="security-line w-1/4 right-0 top-1/3"></div>
+    <div class="security-line-v h-1/3 left-1/4 top-0"></div>
+    <div class="security-line-v h-1/4 right-1/3 bottom-0"></div>
+    
+    <div class="container mx-auto px-6 relative z-10">
+      <div class="inline-flex items-center px-3 py-1 rounded-full bg-primary-900/60 text-primary-400 text-xs font-semibold border border-primary-700 mb-4 shadow-glow security-badge">
+        <i class="fas fa-shield-alt mr-1"></i> SECURE AUTHENTICATION
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight mb-4 flex items-center">
+        <span class="inline-block">{% trans %}Secure Access{% endtrans %}</span>
+        <div class="ml-3 w-3 h-3 rounded-full bg-primary-500 animate-pulse"></div>
       </h1>
+      <p class="text-white text-opacity-90 max-w-2xl text-lg">
+        Authenticate to access the security platform and continue your mission.
+      </p>
     </div>
   </div>
 
-  <div class="container">
-    <div class="row">
-      <div class="col-md-8 col offset-md-2 col-lg-6 offset-lg-3">
-        {% include "components/errors.html" %}
-
-        {% if integrations.mlc() %}
-          <a class="btn btn-secondary btn-lg btn-block w-100" href="{{ url_for('auth.oauth_login') }}">
-            Login with Major League Cyber
-          </a>
-
-          <hr>
-        {% endif %}
-
-        {% with form = Forms.auth.LoginForm() %}
-          <form method="post" accept-charset="utf-8" autocomplete="off">
-            <div class="mb-3">
-              <b>{{ form.name.label(class="form-label") }}</b>
-              {{ form.name(class="form-control", value=name) }}
+  <div class="container mx-auto px-6 py-12 -mt-16">
+    <div class="max-w-md mx-auto relative">
+      <!-- Decorative elements -->
+      <div class="absolute -left-4 -top-4 w-20 h-20 bg-primary-500/10 rounded-full blur-xl"></div>
+      <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-primary-500/10 rounded-full blur-xl"></div>
+      
+      <div class="cyber-ui-element shadow-2xl rounded-xl overflow-hidden border border-primary-800/50 bg-dark-900/90 backdrop-blur-sm">
+        <div class="p-8">
+          <div class="flex items-center justify-center mb-6">
+            <div class="h-12 w-12 rounded-full bg-primary-900/70 border border-primary-500/30 flex items-center justify-center">
+              <i class="fas fa-shield-alt text-primary-400 text-xl"></i>
             </div>
+          </div>
+          
+          {% include "components/errors.html" %}
 
-            <div class="mb-3">
-              <b>{{ form.password.label(class="form-label") }}</b>
-              {{ form.password(class="form-control", value=password) }}
-            </div>
+          {% if integrations.mlc() %}
+            <a class="block w-full bg-gray-700 hover:bg-gray-600 text-white font-medium text-center py-3 px-4 rounded-lg transition duration-300 border border-gray-600 shadow-lg" href="{{ url_for('auth.oauth_login') }}">
+              <i class="fas fa-key mr-2"></i> Login with Major League Cyber
+            </a>
 
-            <div class="row pt-3">
-              <div class="col-6 col-md-8">
-                <a class="align-middle" href="{{ url_for('auth.reset_password') }}">
-                  {% trans %}Forgot your password?{% endtrans %}
-                </a>
+            <div class="relative my-6">
+              <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-700"></div>
               </div>
-
-              <div class="col-6 col-md-4">
-                {{ form.submit(class="btn btn-block btn-primary w-100") }}
+              <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-gray-900 text-gray-400">{% trans %}or login with credentials{% endtrans %}</span>
               </div>
             </div>
+          {% endif %}
 
-            {{ form.nonce() }}
-          </form>
-        {% endwith %}
+          {% with form = Forms.auth.LoginForm() %}
+            <form method="post" accept-charset="utf-8" autocomplete="off">
+              <div class="mb-6">
+                <label for="{{ form.name.id }}" class="block text-sm font-medium text-primary-300 mb-2 flex items-center">
+                  <i class="fas fa-fingerprint text-xs mr-1"></i>
+                  {{ form.name.label.text }}
+                </label>
+                <div class="relative group">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-user text-primary-500"></i>
+                  </div>
+                  {{ form.name(class="w-full pl-10 pr-4 py-3 bg-dark-800 border border-primary-800/50 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition duration-300 shadow-inner", value=name, placeholder="Username or Email") }}
+                  <div class="absolute inset-0 rounded-lg shadow-glow opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                </div>
+              </div>
+              <div class="mb-6">
+                <label for="{{ form.password.id }}" class="block text-sm font-medium text-primary-300 mb-2 flex items-center">
+                  <i class="fas fa-key text-xs mr-1"></i>
+                  {{ form.password.label.text }}
+                </label>
+                <div class="relative group">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-lock text-primary-500"></i>
+                  </div>
+                  {{ form.password(class="w-full pl-10 pr-4 py-3 bg-dark-800 border border-primary-800/50 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition duration-300 shadow-inner", value=password) }}
+                  <div class="absolute inset-0 rounded-lg shadow-glow opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between mt-6 mb-6">
+                <div class="flex items-center space-x-2">
+                  <input type="checkbox" id="remember" name="remember" class="h-4 w-4 rounded border-primary-500 text-primary-600 focus:ring-primary-500 bg-dark-700">
+                  <label for="remember" class="text-sm text-gray-300">Remember me</label>
+                </div>
+                
+                <div class="text-sm">
+                  <a href="{{ url_for('auth.reset_password') }}" class="text-primary-400 hover:text-primary-300 font-medium transition-colors duration-200 flex items-center">
+                    <i class="fas fa-key text-xs mr-1.5"></i>
+                    {% trans %}Forgot password?{% endtrans %}
+                  </a>
+                </div>
+              </div>
+              
+              <!-- Security Tip -->
+              <div class="mb-6 bg-primary-900/30 rounded-lg p-3 border border-primary-800/50 flex items-start">
+                <div class="text-primary-400 mt-0.5 mr-2">
+                  <i class="fas fa-shield-alt"></i>
+                </div>
+                <p class="text-xs text-gray-300">Use a strong password with a mix of letters, numbers, and special characters to protect your account.</p>
+              </div>
+
+              <div class="flex justify-center">
+                <button type="submit" class="w-full py-3 px-6 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg shadow-lg transition-all duration-300 border border-primary-500/30 hover:shadow-primary-500/30 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-900 relative overflow-hidden group">
+                  <span class="absolute inset-0 w-full h-full transition-all duration-300 ease-out opacity-0 bg-gradient-to-br from-transparent via-primary-500/20 to-transparent group-hover:opacity-100"></span>
+                  <span class="relative flex items-center justify-center">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    {% trans %}Secure Login{% endtrans %}
+                  </span>
+                </button>
+              </div>
+
+              {{ form.nonce() }}
+            </form>
+          {% endwith %}
+          
+          <div class="mt-8 pt-6 border-t border-primary-900/30 text-center">
+            <div class="inline-flex items-center space-x-1 mb-2">
+              <div class="h-1 w-1 rounded-full bg-primary-500"></div>
+              <div class="h-1 w-1 rounded-full bg-primary-500"></div>
+              <div class="h-1 w-1 rounded-full bg-primary-500"></div>
+            </div>
+            <p class="text-sm text-gray-400">
+              {% trans %}Don't have an account?{% endtrans %}
+              <a href="{{ url_for('auth.register') }}" class="font-medium text-primary-400 hover:text-primary-300 ml-1 transition-colors duration-200 inline-flex items-center">
+                {% trans %}Register now{% endtrans %} 
+                <span class="ml-1.5 h-5 w-5 rounded-full bg-primary-900 border border-primary-700 inline-flex items-center justify-center">
+                  <i class="fas fa-arrow-right text-xs text-primary-400"></i>
+                </span>
+              </a>
+            </p>
+            
+            <div class="mt-6 flex items-center justify-center text-xs text-gray-500">
+              <i class="fas fa-shield-alt mr-2"></i> Secured with end-to-end encryption
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

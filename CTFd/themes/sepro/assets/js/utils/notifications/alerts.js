@@ -1,5 +1,5 @@
 import Alpine from "alpinejs";
-import { Modal } from "bootstrap";
+import { Modal } from "../modal";
 
 import CTFd from "../../index";
 

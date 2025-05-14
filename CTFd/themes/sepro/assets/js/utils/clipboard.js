@@ -1,4 +1,4 @@
-import { Tooltip } from "bootstrap";
+import { Tooltip } from "./tooltips";
 
 export function copyToClipboard($input) {
   const tooltip = new Tooltip($input, {

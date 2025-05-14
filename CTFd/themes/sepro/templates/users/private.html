@@ -1,104 +1,164 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="jumbotron">
-    <div class="container">
-      <h1>{{ user.name }}</h1>
+  <!-- Hero Header -->
+  <div class="bg-gradient-to-br from-primary-900 to-dark-900 py-20 px-4 relative overflow-hidden">
+    <div class="absolute inset-0 bg-cyber-grid opacity-10"></div>
+    <!-- Security decorative elements -->
+    <div class="absolute inset-0 opacity-20">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="none" width="100%" height="100%" 
+           style="opacity: 0.07; stroke: #10b981; stroke-width: 0.5; fill: none">
+        <path d="M0,500 L1000,500 M500,0 L500,1000" />
+        <circle cx="500" cy="500" r="200" />
+        <circle cx="500" cy="500" r="400" />
+        <path d="M300,300 Q400,100 500,300 T700,300" />
+        <path d="M300,700 Q400,900 500,700 T700,700" />
+      </svg>
+    </div>
+    
+    <!-- Digital circuit lines -->
+    <div class="security-line w-1/3 left-0 top-1/4"></div>
+    <div class="security-line w-1/4 right-0 top-1/3"></div>
+    <div class="security-line-v h-1/3 left-1/4 top-0"></div>
+    <div class="security-line-v h-1/4 right-1/3 bottom-0"></div>
+    
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="flex flex-col md:flex-row items-center md:items-end justify-between">
+        <div class="flex items-center mb-6 md:mb-0">
+          <div class="h-24 w-24 rounded-full bg-primary-900/40 border border-primary-700/30 backdrop-blur-sm flex items-center justify-center shadow-glow mr-6 relative">
+            <i class="fas fa-user-circle text-5xl text-primary-400"></i>
+            <div class="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-primary-500 border-2 border-dark-900 flex items-center justify-center">
+              <i class="fas fa-shield-alt text-xs text-dark-900"></i>
+            </div>
+          </div>
+          <div>
+            <div class="inline-flex items-center px-3 py-1 rounded-full bg-primary-900/60 text-primary-400 text-xs font-semibold border border-primary-700 mb-2 security-badge">
+              <i class="fas fa-user-shield mr-1"></i> SECURITY PROFILE
+            </div>
+            <h1 class="text-4xl font-bold text-white flex items-center">
+              <span class="mr-3">{{ user.name }}</span>
+              <div class="w-2 h-2 rounded-full bg-primary-500 animate-ping"></div>
+            </h1>
+            {% if user.team_id %}
+              <a href="{{ url_for('teams.public', team_id=user.team_id) }}" class="inline-flex items-center mt-2 bg-primary-900/40 backdrop-blur-sm px-4 py-2 rounded-lg text-primary-300 hover:bg-primary-800/40 transition-colors duration-300 border border-primary-800/50">
+                <i class="fas fa-users mr-2"></i>
+                {{ user.team.name }}
+              </a>
+            {% endif %}
+          </div>
+        </div>
 
-      {% if user.team_id %}
-        <h2>
-          <a href="{{ url_for('teams.public', team_id=user.team_id) }}">
-						<span class="badge bg-secondary">
-							{{ user.team.name }}
-						</span>
-          </a>
-        </h2>
-      {% endif %}
+        <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:items-center">
+          <div class="flex flex-wrap gap-2 mr-6">
+            {% if user.oauth_id %}
+              <a href="https://majorleaguecyber.org/u/{{ user.name }}" class="inline-flex items-center bg-primary-700/60 backdrop-blur-sm px-3 py-1.5 rounded-lg text-primary-200 hover:bg-primary-600/60 border border-primary-500/30 transition duration-300 text-sm font-medium shadow-glow relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-r from-primary-400/0 via-primary-400/20 to-primary-400/0 opacity-0 group-hover:opacity-100 transform -translate-x-full group-hover:translate-x-full transition-all duration-1000"></div>
+                <i class="fas fa-check-circle mr-1.5"></i>
+                {% trans %}Official{% endtrans %}
+              </a>
+            {% endif %}
 
-      <div class="pt-2">
-        {% if user.oauth_id %}
-          <a href="https://majorleaguecyber.org/u/{{ user.name }}">
-            <h3 class="d-inline-block mx-1"><span class="badge rounded-pill bg-primary">{% trans %}Official{% endtrans %}</span></h3>
-          </a>
-        {% endif %}
+            {% if user.affiliation %}
+              <div class="inline-flex items-center bg-primary-900/50 backdrop-blur-sm px-3 py-1.5 rounded-lg text-primary-300 text-sm font-medium border border-primary-800/40 shadow-inner">
+                <i class="fas fa-building mr-1.5"></i>
+                {{ user.affiliation }}
+              </div>
+            {% endif %}
 
-        {% if user.affiliation %}
-          <h3 class="d-inline-block mx-1">
-            <span class="badge rounded-pill bg-primary">{{ user.affiliation }}</span>
-          </h3>
-        {% endif %}
-
-        {% if user.country %}
-          <h3 class="d-inline-block mx-1">
-            <span class="badge rounded-pill bg-primary">
-                <i class="flag-{{ user.country.lower() }}"></i>
+            {% if user.country %}
+              <div class="inline-flex items-center bg-primary-900/50 backdrop-blur-sm px-3 py-1.5 rounded-lg text-primary-300 text-sm font-medium border border-primary-800/40 shadow-inner">
+                <i class="flag-{{ user.country.lower() }} mr-1.5"></i>
                 {{ lookup_country_code(user.country) }}
-            </span>
-          </h3>
-        {% endif %}
-      </div>
-
-      <div class="pt-2">
-        {% for field in user.fields %}
-          <h3 class="d-block">
-            {{ field.name }}: {{ field.value }}
-          </h3>
-        {% endfor %}
-      </div>
-
-      {% if user.fields %}
-        <hr class="w-50 mx-auto">
-      {% endif %}
-
-      <div>
-        <h2 class="text-center">
-          {% if account.place %}
-            {{ account.place }} <small>place</small>
-          {% endif %}
-        </h2>
-        <h2 class="text-center">
+              </div>
+            {% endif %}
+            
+            {% if user.website %}
+              <a href="{{ user.website }}" target="_blank" rel="noopener" class="inline-flex items-center bg-primary-700/60 backdrop-blur-sm px-3 py-1.5 rounded-lg text-primary-200 hover:bg-primary-600/60 border border-primary-500/30 transition duration-300 text-sm font-medium shadow-glow relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-r from-primary-400/0 via-primary-400/20 to-primary-400/0 opacity-0 group-hover:opacity-100 transform -translate-x-full group-hover:translate-x-full transition-all duration-1000"></div>
+                <i class="fas fa-external-link-alt mr-1.5"></i>
+                Website
+              </a>
+            {% endif %}
+          </div>
+          
           {% if account %}
-            {{ account.get_score(admin=True) }} <small>points</small>
+            <div class="bg-primary-900/50 backdrop-blur-sm px-5 py-3 rounded-xl flex items-center space-x-8 border border-primary-700/30 shadow-glow">
+              {% if account.place %}
+                <div class="text-center relative">
+                  <div class="text-sm text-primary-300 mb-1 uppercase tracking-wide text-xs">Rank</div>
+                  <div class="text-2xl font-bold text-white flex items-center">
+                    <div class="mr-1">#</div>{{ account.place }}
+                  </div>
+                  <div class="absolute -right-4 top-1/2 h-full w-px bg-gradient-to-b from-transparent via-primary-500/50 to-transparent"></div>
+                </div>
+              {% endif %}
+              <div class="text-center">
+                <div class="text-sm text-primary-300 mb-1 uppercase tracking-wide text-xs">Points</div>
+                <div class="text-2xl font-bold text-white">
+                  {{ account.get_score(admin=True) }}
+                </div>
+              </div>
+              <div class="security-line w-1/4 right-1/4 bottom-0 absolute opacity-30"></div>
+            </div>
           {% endif %}
-        </h2>
-      </div>
-
-      <div class="pt-3">
-        {% if user.website %}
-          <a href="{{ user.website }}" target="_blank" style="color: inherit;" rel="noopener">
-            <i
-                class="fas fa-external-link-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
-                title="{{ user.website }}"
-            ></i>
-          </a>
-        {% endif %}
+        </div>
       </div>
     </div>
   </div>
-  <div class="container">
-    {% include "components/errors.html" %}
+
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 -mt-6">
+    {% if user.fields %}
+      <div class="cyber-ui-element bg-dark-900/90 backdrop-blur-sm rounded-xl border border-primary-800/50 shadow-2xl p-6 mb-10 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-primary-500/5 blur-3xl rounded-full -mr-16 -mt-16"></div>
+        
+        <div class="flex items-center mb-6">
+          <div class="h-8 w-8 rounded-lg bg-primary-900/70 border border-primary-500/30 flex items-center justify-center mr-3">
+            <i class="fas fa-id-card text-primary-400"></i>
+          </div>
+          <h3 class="text-xl font-bold text-white">Profile Information</h3>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {% for field in user.fields %}
+            <div class="flex items-start p-3 rounded-lg bg-primary-900/30 border border-primary-800/50">
+              <div class="font-medium text-primary-300 mr-2">{{ field.name }}:</div>
+              <div class="text-white">{{ field.value }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
 
     {% set solves = user.solves %}
     {% set awards = user.awards %}
 
     {% if solves or awards %}
       {% if awards %}
-        <div class="row">
-          <div class="col-md-12">
-            <h3>{% trans %}Awards{% endtrans %}</h3>
-
-          </div>
-          {% for award in awards %}
-            <div class="col-md-3 col-sm-6">
-              <p class="text-center">
-                <i class="award-icon award-{{ award.icon }} fa-2x"></i>
-                <br>
-                <strong>{{ award.name }}</strong>
-              </p>
-              <p class="text-center">{{ award.category or "" }}</p>
-              <p class="text-center">{{ award.description or "" }}</p>
-              <p class="text-center">{{ award.value }}</p>
-            </div>
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+          <h3 class="text-2xl font-bold text-slate-800 mb-6 pb-2 border-b border-slate-100">
+            <i class="fas fa-trophy text-accent-500 mr-2"></i>{% trans %}Awards{% endtrans %}
+          </h3>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for award in awards %}
+              <div class="bg-slate-50 rounded-lg p-4 border border-slate-200 transform transition-transform duration-300 hover:-translate-y-1 hover:shadow-md">
+                <div class="flex flex-col items-center">
+                  <div class="w-16 h-16 flex items-center justify-center rounded-full bg-primary-100 mb-4">
+                    <i class="award-icon award-{{ award.icon }} fa-2x text-primary-600"></i>
+                  </div>
+                  <h4 class="text-lg font-bold text-center text-slate-800 mb-2">{{ award.name }}</h4>
+                  {% if award.category %}
+                    <div class="text-sm text-slate-500 mb-1">{{ award.category }}</div>
+                  {% endif %}
+                  {% if award.description %}
+                    <p class="text-center text-slate-600 text-sm mb-3">{{ award.description }}</p>
+                  {% endif %}
+                  <div class="bg-primary-50 px-3 py-1 rounded-full text-primary-700 font-medium text-sm">
+                    +{{ award.value }}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
           {% endfor %}
         </div>
       {% endif %}

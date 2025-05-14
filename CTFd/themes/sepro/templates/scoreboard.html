@@ -1,63 +1,171 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="jumbotron">
-    <div class="container">
-      <h1>
-        {% trans %}Scoreboard{% endtrans %}
-      </h1>
+  <!-- Hero Header -->
+  <div class="bg-gradient-to-br from-primary-900 to-dark-900 text-white py-16 px-4 rounded-xl shadow-2xl mb-12 mx-4 sm:mx-6 lg:mx-8 relative overflow-hidden border border-primary-900/50">
+    <div class="absolute inset-0 bg-cyber-grid opacity-10"></div>
+    
+    <!-- Security decorative elements -->
+    <div class="absolute inset-0 opacity-20">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="none" width="100%" height="100%" 
+           style="opacity: 0.07; stroke: #10b981; stroke-width: 0.5; fill: none">
+        <path d="M0,500 L1000,500 M500,0 L500,1000" />
+        <circle cx="500" cy="500" r="200" />
+        <circle cx="500" cy="500" r="400" />
+        <path d="M300,300 Q400,100 500,300 T700,300" />
+        <path d="M300,700 Q400,900 500,700 T700,700" />
+      </svg>
+    </div>
+    
+    <!-- Digital circuit lines -->
+    <div class="security-line w-1/3 left-0 top-1/4"></div>
+    <div class="security-line w-1/4 right-0 top-1/3"></div>
+    <div class="security-line-v h-1/3 left-1/4 top-0"></div>
+    <div class="security-line-v h-1/4 right-1/3 bottom-0"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+        <div>
+          <div class="inline-flex items-center px-3 py-1 rounded-full bg-primary-900/60 text-primary-400 text-xs font-semibold border border-primary-700 mb-4 shadow-glow security-badge">
+            <i class="fas fa-shield-alt mr-1"></i> SECURITY ANALYTICS
+          </div>
+          <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 flex items-center">
+            {% trans %}Scoreboard{% endtrans %}
+            <div class="ml-3 w-3 h-3 rounded-full bg-primary-500 animate-pulse"></div>
+          </h1>
+          <p class="text-white text-opacity-90 max-w-2xl text-lg">
+            Real-time security performance metrics and rankings for top security professionals.
+          </p>
+        </div>
+        
+        <div class="mt-8 md:mt-0">
+          <div class="flex flex-col bg-gray-800/40 backdrop-blur-sm p-4 rounded-lg border border-gray-700 shadow-lg min-w-[180px]">
+            <div class="text-sm text-gray-400 mb-1">YOUR CURRENT RANKING</div>
+            <div class="text-3xl font-bold text-white mb-2">
+              {% if user_rank %}
+                #{{ user_rank }}
+              {% else %}
+                -
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="container">
+  
+  <div class="container mx-auto px-4 py-8">
     {% include "components/errors.html" %}
 
-    <div id="score-graph" class="align-items-center" :class="{'d-flex': show, 'd-none': !show}" x-data="ScoreboardDetail" x-ref="scoregraph" @bracket-change.window="activeBracket=$event.detail; update();">
-      <div class="col-md-12 text-center">
-        <i class="fas fa-circle-notch fa-spin fa-3x fa-fw spinner"></i>
+    <div id="score-graph" class="my-8" :class="{'block': show, 'hidden': !show}" x-data="ScoreboardDetail" x-ref="scoregraph" @bracket-change.window="activeBracket=$event.detail; update();">
+      <div class="flex justify-center items-center min-h-[300px]">
+        <div class="text-center">
+          <svg class="animate-spin h-10 w-10 text-indigo-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
       </div>
     </div>
 
-    <div id="scoreboard" class="row" x-data="ScoreboardList">
+    <div id="scoreboard" x-data="ScoreboardList">
       <template x-if="brackets.length && standings.length">
-        <div class="col-md-12 py-3">
-          <nav class="nav nav-pills nav-fill">
-            <button :class="{'nav-link': true, 'active': !activeBracket}" @click="activeBracket=null">{% trans %}All{% endtrans %}</button>
+        <div class="mb-8">
+          <div class="bg-white rounded-xl shadow-md p-3 flex overflow-x-auto border border-slate-100">
+            <button 
+              :class="!activeBracket ? 'bg-primary-600 text-white shadow-md' : 'text-slate-700 hover:bg-slate-50'" 
+              class="px-5 py-2.5 rounded-lg font-medium mx-1.5 whitespace-nowrap transition-all duration-200 flex items-center"
+              @click="activeBracket=null">
+                <i class="fas fa-users mr-1.5"></i>
+                {% trans %}All{% endtrans %}
+            </button>
             <template x-for="bracket in brackets">
-              <button :class="{'nav-link': true, 'active': activeBracket == bracket.id}" x-text="bracket.name" @click="activeBracket=bracket.id"></button>
+              <button 
+                :class="activeBracket == bracket.id ? 'bg-primary-600 text-white shadow-md' : 'text-slate-700 hover:bg-slate-50'" 
+                class="px-5 py-2.5 rounded-lg font-medium mx-1.5 whitespace-nowrap transition-all duration-200 flex items-center"
+                x-text="bracket.name" 
+                @click="activeBracket=bracket.id">
+              </button>
             </template>
-          </nav>
+          </div>
         </div>
       </template>
 
-      <div class="col-md-12" x-show="standings.length">
-        <table class="table table-striped align-middle">
-          <thead>
-          <tr>
-            <th style="width: 10px">{% trans %}Place{% endtrans %}</th>
-            <th class="text-start ps-3">{{ get_mode_as_word(capitalize=True) }}</th>
-            <th>{% trans %}Score{% endtrans %}</th>
-          </tr>
-          </thead>
-
-          <tbody>
-            <template x-for="(standing, index) in standings.filter(i => activeBracket ? i.bracket_id==activeBracket : true)">
+      <div class="w-full" x-show="standings.length">
+        <div class="bg-white overflow-hidden rounded-xl shadow-lg border border-slate-100">
+          <table class="w-full">
+            <thead class="bg-slate-50">
               <tr>
-                <th scope="row" class="text-center" x-text="index + 1"></th>
-                <td class="text-start">
-                  <a :href="standing.account_url" x-text="standing.name"></a>
-                  <template x-if="standing.bracket_name">
-                    <span class="badge bg-secondary ms-2" x-text="standing.bracket_name"></span>
-                  </template>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider w-20">
+                  {% trans %}Place{% endtrans %}
+                </th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  {{ get_mode_as_word(capitalize=True) }}
+                </th>
+                <th class="px-6 py-4 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  {% trans %}Score{% endtrans %}
+                </th>
+              </tr>
+            </thead>
+            
+            <tbody class="divide-y divide-slate-200">
+            <template x-for="(standing, index) in standings.filter(i => activeBracket ? i.bracket_id==activeBracket : true)">
+              <tr :class="index < 3 ? 'bg-gradient-to-r from-slate-50 to-white hover:from-slate-100 hover:to-slate-50' : 'bg-white hover:bg-slate-50'" 
+                  class="transition-all duration-200"
+                  :data-user-id="standing.account_id">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex justify-center">
+                    <template x-if="index === 0">
+                      <span class="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-500 shadow-md animate-pulse-slow">
+                        <i class="fas fa-trophy text-white text-lg"></i>
+                      </span>
+                    </template>
+                    <template x-if="index === 1">
+                      <span class="flex items-center justify-center h-9 w-9 rounded-full bg-gradient-to-br from-slate-300 to-slate-400 shadow-md">
+                        <i class="fas fa-medal text-white"></i>
+                      </span>
+                    </template>
+                    <template x-if="index === 2">
+                      <span class="flex items-center justify-center h-9 w-9 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 shadow-md">
+                        <i class="fas fa-award text-white"></i>
+                      </span>
+                    </template>
+                    <template x-if="index > 2">
+                      <span class="flex items-center justify-center h-8 w-8 rounded-full text-slate-600 bg-slate-100 font-medium text-sm" x-text="index + 1"></span>
+                    </template>
+                  </div>
                 </td>
-                <td x-text="standing.score"></td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center">
+                      <span class="font-bold text-indigo-600 dark:text-indigo-400" x-text="standing.name.charAt(0).toUpperCase()"></span>
+                    </div>
+                    <div class="ml-4">
+                      <a :href="standing.account_url" class="text-sm font-medium text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400" x-text="standing.name"></a>
+                      <template x-if="standing.bracket_name">
+                        <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200" x-text="standing.bracket_name"></span>
+                      </template>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <span class="font-bold text-gray-900 dark:text-white" x-text="standing.score"></span>
+                </td>
               </tr>
             </template>
           </tbody>
         </table>
       </div>
+      </div>
 
-      <div class="col-md-12" x-show="! standings.length">
-        <h3 class="text-center text-muted">{% trans %}Scoreboard is empty{% endtrans %}</h3>
+      <div class="w-full mt-10" x-show="! standings.length">
+        <div class="text-center py-10 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h3 class="mt-2 text-xl font-medium text-gray-900 dark:text-gray-100">{% trans %}Scoreboard is empty{% endtrans %}</h3>
+          <p class="mt-1 text-gray-500 dark:text-gray-400">Be the first to solve challenges and appear on the scoreboard!</p>
+        </div>
       </div>
     </div>
   </div>

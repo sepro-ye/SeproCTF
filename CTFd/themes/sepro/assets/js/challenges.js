@@ -2,8 +2,6 @@ import Alpine from "alpinejs";
 import dayjs from "dayjs";
 
 import CTFd from "./index";
-
-import { Modal, Tab, Tooltip } from "bootstrap";
 import highlight from "./theme/highlight";
 
 function addTargetBlank(html) {
@@ -22,6 +20,50 @@ Alpine.store("challenge", {
   data: {
     view: "",
   },
+});
+
+// Add tooltip directive for Tailwind
+Alpine.directive('tooltip', (el, { expression }, { evaluateLater, effect }) => {
+  const getTooltipText = evaluateLater(expression);
+  
+  // Create tooltip element
+  const tooltip = document.createElement('div');
+  tooltip.className = 'absolute z-50 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded-md shadow-sm opacity-0 transition-opacity duration-200 pointer-events-none';
+  tooltip.style.top = '-30px';
+  tooltip.style.left = '50%';
+  tooltip.style.transform = 'translateX(-50%)';
+  
+  // Add arrow
+  const arrow = document.createElement('div');
+  arrow.className = 'absolute w-2 h-2 bg-gray-900 transform rotate-45';
+  arrow.style.bottom = '-4px';
+  arrow.style.left = 'calc(50% - 4px)';
+  
+  // Add tooltip to element
+  el.style.position = 'relative';
+  tooltip.appendChild(arrow);
+  el.appendChild(tooltip);
+  
+  // Show/hide functions
+  function show() {
+    getTooltipText(value => {
+      tooltip.textContent = value;
+      tooltip.appendChild(arrow);
+      tooltip.classList.remove('opacity-0');
+      tooltip.classList.add('opacity-100');
+    });
+  }
+  
+  function hide() {
+    tooltip.classList.remove('opacity-100');
+    tooltip.classList.add('opacity-0');
+  }
+  
+  // Add event listeners
+  el.addEventListener('mouseenter', show);
+  el.addEventListener('mouseleave', hide);
+  el.addEventListener('focus', show);
+  el.addEventListener('blur', hide);
 });
 
 Alpine.data("Hint", () => ({
@@ -59,7 +101,7 @@ Alpine.data("Challenge", () => ({
   id: null,
   next_id: null,
   submission: "",
-  tab: null,
+  activeTab: "challenge",
   solves: [],
   response: null,
   share_url: null,
@@ -70,39 +112,15 @@ Alpine.data("Challenge", () => ({
     highlight();
   },
 
-  getStyles() {
-    let styles = {
-      "modal-dialog": true,
-    };
-    try {
-      let size = CTFd.config.themeSettings.challenge_window_size;
-      switch (size) {
-        case "sm":
-          styles["modal-sm"] = true;
-          break;
-        case "lg":
-          styles["modal-lg"] = true;
-          break;
-        case "xl":
-          styles["modal-xl"] = true;
-          break;
-        default:
-          break;
-      }
-    } catch (error) {
-      // Ignore errors with challenge window size
-      console.log("Error processing challenge_window_size");
-      console.log(error);
-    }
-    return styles;
-  },
-
-  async init() {
-    highlight();
+  closeModal() {
+    const modal = document.getElementById("challenge-window");
+    modal.classList.add("hidden");
+    // Remove location hash
+    history.replaceState(null, null, " ");
   },
 
   async showChallenge() {
-    new Tab(this.$el).show();
+    this.activeTab = "challenge";
   },
 
   async showSolves() {
@@ -111,7 +129,7 @@ Alpine.data("Challenge", () => ({
       solve.date = dayjs(solve.date).format("MMMM Do, h:mm:ss A");
       return solve;
     });
-    new Tab(this.$el).show();
+    this.activeTab = "solves";
   },
 
   getNextId() {
@@ -120,21 +138,13 @@ Alpine.data("Challenge", () => ({
   },
 
   async nextChallenge() {
-    let modal = Modal.getOrCreateInstance("[x-ref='challengeWindow']");
-
-    // TODO: Get rid of this private attribute access
-    // See https://github.com/twbs/bootstrap/issues/31266
-    modal._element.addEventListener(
-      "hidden.bs.modal",
-      event => {
-        // Dispatch load-challenge event to call loadChallenge in the ChallengeBoard
-        Alpine.nextTick(() => {
-          this.$dispatch("load-challenge", this.getNextId());
-        });
-      },
-      { once: true },
-    );
-    modal.hide();
+    const modal = document.getElementById("challenge-window");
+    modal.classList.add("hidden");
+    
+    // Dispatch load-challenge event to call loadChallenge in the ChallengeBoard
+    setTimeout(() => {
+      this.$dispatch("load-challenge", this.getNextId());
+    }, 100);
   },
 
   async getShareUrl() {
@@ -153,13 +163,18 @@ Alpine.data("Challenge", () => ({
 
   copyShareUrl() {
     navigator.clipboard.writeText(this.share_url);
-    let t = Tooltip.getOrCreateInstance(this.$el);
-    t.enable();
-    t.show();
-    setTimeout(() => {
-      t.hide();
-      t.disable();
-    }, 2000);
+    
+    // Flash the tooltip message
+    const copyBtn = this.$el.querySelector('button[x-tooltip]');
+    if (copyBtn) {
+      const mouseEnter = new MouseEvent('mouseenter');
+      copyBtn.dispatchEvent(mouseEnter);
+      
+      setTimeout(() => {
+        const mouseLeave = new MouseEvent('mouseleave');
+        copyBtn.dispatchEvent(mouseLeave);
+      }, 2000);
+    }
   },
 
   async submitChallenge() {
@@ -265,18 +280,8 @@ Alpine.data("ChallengeBoard", () => ({
 
       // nextTick is required here because we're working in a callback
       Alpine.nextTick(() => {
-        let modal = Modal.getOrCreateInstance("[x-ref='challengeWindow']");
-        // TODO: Get rid of this private attribute access
-        // See https://github.com/twbs/bootstrap/issues/31266
-        modal._element.addEventListener(
-          "hidden.bs.modal",
-          event => {
-            // Remove location hash
-            history.replaceState(null, null, " ");
-          },
-          { once: true },
-        );
-        modal.show();
+        const modal = document.getElementById("challenge-window");
+        modal.classList.remove("hidden");
         history.replaceState(null, null, `#${challenge.data.name}-${challengeId}`);
       });
     });

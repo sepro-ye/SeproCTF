@@ -1,0 +1,56 @@
+/* Challenge Component Dark Theme Styles 
+-------------------------------------------------- */
+
+.dark {
+  .challenge-desc {
+    overflow-wrap: anywhere;
+    
+    img {
+      max-width: 100%;
+      @apply border border-dark-700 rounded-md;
+    }
+  }
+  
+  .challenge-button {
+    border: none;
+    @apply bg-dark-800 text-white border border-dark-700 hover:border-primary-600 shadow-md hover:shadow-glow;
+    
+    &.challenge-solved {
+      @apply bg-primary-700 border-primary-600 shadow-glow;
+      
+      &:hover {
+        @apply bg-primary-800;
+      }
+    }
+  }
+  
+  .challenge-solves {
+    @apply text-primary-400;
+  }
+  
+  .challenge-value {
+    @apply text-primary-300 font-semibold;
+  }
+  
+  /* Modal styles for dark theme */
+  .modal-content {
+    @apply bg-dark-900 border border-dark-700 shadow-lg;
+  }
+  
+  .modal-header {
+    @apply border-dark-700 text-primary-400;
+  }
+  
+  .modal-footer {
+    @apply border-dark-700;
+  }
+  
+  /* Key submission styles */
+  .key-input {
+    @apply bg-dark-800 border-dark-700 text-gray-200;
+    
+    &:focus {
+      @apply border-primary-600 ring-primary-500;
+    }
+  }
+}

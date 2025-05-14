@@ -1,42 +1,238 @@
-<!-- Welcome Section -->
-<div class="card text-center py-5 my-5">
-<div class="card-body">
-    <h1 class="card-title display-4">Welcome to Sepro CTF</h5>
-    <p class="card-text lead">Put your cybersecurity skills to the test and rise to the top of the leaderboard.</p>
-    <a href="#challenges" class="btn btn-primary btn-lg">Start Now</a>
+{% block navbar %}
+<!-- Custom Navbar similar to the image -->
+<div class="fixed top-0 w-full z-50 bg-dark-950/90 backdrop-blur-sm border-b border-primary-900">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex justify-between items-center h-16">
+      <!-- Left: Brand -->
+      <div class="flex items-center">
+        <a href="/" class="flex items-center">
+          <div class="flex items-center justify-center h-10 w-10 rounded-md bg-primary-600 text-white shadow-glow mr-2">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <span class="text-xl font-bold text-white">Securely</span>
+        </a>
+      </div>
+
+      <!-- Center: Navigation Links -->
+      <div class="hidden md:flex space-x-8">
+        <a href="/" class="text-white hover:text-primary-400 transition-colors duration-200">Home</a>
+        <a href="#services" class="text-white hover:text-primary-400 transition-colors duration-200">Services</a>
+        <a href="#pricing" class="text-white hover:text-primary-400 transition-colors duration-200">Pricing</a>
+        <a href="#company" class="text-white hover:text-primary-400 transition-colors duration-200">Company</a>
+        <a href="#blog" class="text-white hover:text-primary-400 transition-colors duration-200">Blog</a>
+      </div>
+
+      <!-- Right: CTA Button -->
+      <div>
+        <a href="#demo" class="bg-primary-600 hover:bg-primary-500 text-white px-4 py-2 rounded-md font-medium text-sm shadow-glow transition-all duration-200">
+          Try It Now
+        </a>
+      </div>
+    </div>
+  </div>
 </div>
+{% endblock %}
+
+{% block main_classes %}{% endblock %}
+
+<!-- Hero Section with Cybersecurity Theme -->
+<div class="relative pt-16 pb-16 overflow-hidden">
+  <!-- Background elements and decorations -->
+  <div class="absolute inset-0 bg-cyber-grid opacity-10 z-0"></div>
+  <div class="absolute inset-0 bg-gradient-to-br from-dark-950/30 to-dark-900/90 z-0"></div>
+  
+  <!-- Digital circuit lines -->
+  <div class="absolute inset-0 z-0">
+    <div class="security-line w-1/3 left-0 top-1/4"></div>
+    <div class="security-line w-1/4 right-0 top-1/3"></div>
+    <div class="security-line-v h-1/3 left-1/4 top-0"></div>
+    <div class="security-line-v h-1/4 right-1/3 bottom-0"></div>
+  </div>
+  
+  <div class="container mx-auto px-4 relative z-10">
+    <!-- Security elements decorations -->
+    <div class="flex items-center justify-between mb-12 mt-8">
+      <!-- Left security icon -->
+      <div class="hidden md:block relative">
+        <div class="w-32 h-24 relative">
+          <div class="absolute top-10 left-20 bg-dark-800/50 p-4 rounded-lg shadow-glow border border-primary-700">
+            <i class="fas fa-key text-primary-400 text-3xl"></i>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Security badge -->
+      <div class="mx-auto md:mx-0 mb-6 inline-flex items-center justify-center p-2 px-4 bg-primary-900/30 rounded-full border border-primary-700 backdrop-blur-sm security-badge">
+        <i class="fas fa-shield-alt text-primary-400 mr-2"></i>
+        <span class="text-sm font-medium text-white">Best security service</span>
+      </div>
+      
+      <!-- Right security icon -->
+      <div class="hidden md:block relative">
+        <div class="w-32 h-24 relative">
+          <div class="absolute top-10 right-20 bg-dark-800/50 p-4 rounded-lg shadow-glow border border-primary-700">
+            <i class="fas fa-lock text-primary-400 text-3xl"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Hero Content -->
+    <div class="text-center max-w-4xl mx-auto relative z-20">
+      <!-- Glowing circles in background -->
+      <div class="absolute -top-20 -left-20 w-64 h-64 bg-primary-600/5 rounded-full filter blur-3xl"></div>
+      <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-primary-600/10 rounded-full filter blur-3xl"></div>
+      
+      <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight">
+        Your Digital Fortress<br>
+        <span class="text-gray-300">Starts Here.</span>
+      </h1>
+      
+      <p class="text-xl text-gray-300 max-w-2xl mx-auto mb-10">
+        Protect your business from cyber threats with cutting-edge security solutions,
+        real-time monitoring, and a team of experienced experts.
+      </p>
+      
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="#demo" class="btn bg-primary-600 hover:bg-primary-500 text-white px-8 py-3 rounded-lg font-medium text-lg shadow-glow hover:shadow-glow-intense transition-all duration-300 border border-primary-500/50 flex items-center">
+          Book a Demo <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+        <a href="#learn" class="btn bg-transparent hover:bg-dark-800/50 text-white px-8 py-3 rounded-lg font-medium text-lg transition-all duration-300 border border-primary-700/50 backdrop-blur-sm hover:border-primary-600">
+          Learn More
+        </a>
+      </div>
+      
+      <!-- Cyber UI element -->
+      <div class="mt-16 pt-8 relative">
+        <div class="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary-500/20 to-transparent"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Security decoration elements at bottom -->
+  <div class="flex items-center justify-between mt-12 px-6 max-w-5xl mx-auto">
+    <!-- Left security icon -->
+    <div class="hidden md:block relative">
+      <div class="cyber-ui-element p-4 shadow-glow">
+        <i class="fas fa-shield-virus text-primary-400 text-2xl"></i>
+      </div>
+    </div>
+    
+    <!-- Center circuit line -->
+    <div class="hidden md:block w-full mx-8 h-px bg-gradient-to-r from-transparent via-primary-500/30 to-transparent"></div>
+    
+    <!-- Right security icon -->
+    <div class="hidden md:block relative">
+      <div class="cyber-ui-element p-4 shadow-glow">
+        <i class="fas fa-fingerprint text-primary-400 text-2xl"></i>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Features Section -->
-<section class="py-5">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
-                        <h5 class="card-title">Cybersecurity Challenges</h5>
-                        <p class="card-text">From beginner to advanced, tackle a variety of real-world challenges.</p>
+<section class="py-12 relative">
+    <!-- Background elements -->
+    <div class="absolute inset-0 bg-cyber-grid opacity-5 z-0"></div>
+    
+    <div class="text-center mb-12 relative z-10">
+        <h2 class="text-3xl font-bold text-white mb-4">Cyber Security Services</h2>
+        <div class="w-24 h-1 bg-primary-500 mx-auto rounded-full"></div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-dark-900/80 rounded-xl border border-primary-800/50 overflow-hidden shadow-lg hover:shadow-primary-500/30 transition-all duration-300 hover:-translate-y-1">
+            <div class="p-6">
+                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-primary-900/50 text-primary-400 mb-6 mx-auto shadow-glow">
+                    <i class="fas fa-shield-virus fa-2x"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Threat Detection</h3>
+                <p class="text-gray-400">Advanced machine learning algorithms to identify and neutralize threats before they impact your business.</p>
+                <div class="mt-6 pt-6 border-t border-gray-800">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">24/7 Monitoring</span>
+                        <span class="text-primary-400">AI-Powered</span>
+                        <span class="text-gray-500">Real-time Alerts</span>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <i class="fas fa-trophy fa-3x text-primary mb-3"></i>
-                        <h5 class="card-title">Leaderboard</h5>
-                        <p class="card-text">Compete against others and track your progress on the global leaderboard.</p>
+        </div>
+        
+        <div class="bg-dark-900/80 rounded-xl border border-primary-800/50 overflow-hidden shadow-lg hover:shadow-primary-500/30 transition-all duration-300 hover:-translate-y-1">
+            <div class="p-6">
+                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-primary-900/50 text-primary-400 mb-6 mx-auto shadow-glow">
+                    <i class="fas fa-lock fa-2x"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Data Protection</h3>
+                <p class="text-gray-400">End-to-end encryption and secure access controls to keep your sensitive data safe from unauthorized access.</p>
+                <div class="mt-6 pt-6 border-t border-gray-800">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Encryption</span>
+                        <span class="text-primary-400">Zero Trust</span>
+                        <span class="text-gray-500">Compliance</span>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <i class="fas fa-user-secret fa-3x text-primary mb-3"></i>
-                        <h5 class="card-title">CTF Community</h5>
-                        <p class="card-text">Join a thriving community of ethical hackers and security enthusiasts.</p>
+        </div>
+        
+        <div class="bg-dark-900/80 rounded-xl border border-primary-800/50 overflow-hidden shadow-lg hover:shadow-primary-500/30 transition-all duration-300 hover:-translate-y-1">
+            <div class="p-6">
+                <div class="flex items-center justify-center h-16 w-16 rounded-full bg-primary-900/50 text-primary-400 mb-6 mx-auto shadow-glow">
+                    <i class="fas fa-user-shield fa-2x"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Expert Consultancy</h3>
+                <p class="text-gray-400">Our team of cybersecurity professionals provides tailored solutions to address your specific security challenges.</p>
+                <div class="mt-6 pt-6 border-t border-gray-800">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500">Risk Assessment</span>
+                        <span class="text-primary-400">Strategy</span>
+                        <span class="text-gray-500">Implementation</span>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-16 bg-dark-900/50 backdrop-blur-sm rounded-xl mt-8 mb-16 border border-primary-800/30 shadow-inner">
+    <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-white mb-2">Security Impact</h2>
+        <p class="text-gray-400">Measurable results from our comprehensive security services</p>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+        <div class="p-6 text-center">
+            <div class="text-4xl font-bold text-primary-400 mb-2">500+</div>
+            <div class="text-gray-400 text-sm uppercase tracking-wider">Protected Businesses</div>
+        </div>
+        <div class="p-6 text-center">
+            <div class="text-4xl font-bold text-primary-400 mb-2">99.9%</div>
+            <div class="text-gray-400 text-sm uppercase tracking-wider">Threat Prevention</div>
+        </div>
+        <div class="p-6 text-center">
+            <div class="text-4xl font-bold text-primary-400 mb-2">24/7</div>
+            <div class="text-gray-400 text-sm uppercase tracking-wider">Monitoring Coverage</div>
+        </div>
+        <div class="p-6 text-center">
+            <div class="text-4xl font-bold text-primary-400 mb-2">50+</div>
+            <div class="text-gray-400 text-sm uppercase tracking-wider">Security Experts</div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-16 text-center">
+    <div class="bg-gradient-to-br from-primary-900 to-dark-900 rounded-xl shadow-2xl p-8 mx-auto max-w-4xl border border-primary-800/50">
+        <div class="flex flex-col md:flex-row items-center justify-between">
+            <div class="mb-6 md:mb-0 md:mr-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">Ready to secure your business?</h2>
+                <p class="text-primary-200">Book a consultation with our security experts today</p>
+            </div>
+            <div>
+                <a href="#contact" class="btn bg-white hover:bg-gray-100 text-primary-700 font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-primary-500/20 transition-all duration-300">
+                    Get Started Now
+                </a>
             </div>
         </div>
     </div>

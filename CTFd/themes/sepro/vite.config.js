@@ -68,6 +68,7 @@ export default defineConfig({
         users_list: resolve(__dirname, "assets/js/users/list.js"),
         main: resolve(__dirname, "assets/scss/main.scss"),
         color_mode_switcher: resolve(__dirname, "assets/js/color_mode_switcher.js"),
+        dark_mode_styles: resolve(__dirname, "assets/js/dark_mode_styles.js"),
       },
     },
   },

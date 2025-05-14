@@ -1,0 +1,1 @@
+localStorage.setItem("theme","dark");document.documentElement.setAttribute("data-mdb-theme","dark");document.documentElement.classList.add("dark");window.addEventListener("load",()=>{document.querySelectorAll(".theme-switch").forEach(e=>{e.style.display="none"})});

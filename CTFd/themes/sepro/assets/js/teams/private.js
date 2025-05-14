@@ -1,6 +1,6 @@
 import Alpine from "alpinejs";
 import CTFd from "../index";
-import { Modal } from "bootstrap";
+import { Modal } from "../utils/modal";
 import { serializeJSON } from "@ctfdio/ctfd-js/forms";
 import { copyToClipboard } from "../utils/clipboard";
 import { colorHash } from "@ctfdio/ctfd-js/ui";

@@ -2,35 +2,57 @@
 {% from "macros/forms.html" import render_extra_fields %}
 
 {% block content %}
-  <div class="jumbotron">
-    <div class="container">
-      <h1>
+  <div class="bg-gradient-to-r from-primary-500 to-primary-600">
+    <div class="container mx-auto py-16 px-4">
+      <h1 class="text-4xl font-bold text-white mb-4">
         {% trans %}Settings{% endtrans %}
       </h1>
+      <p class="text-white text-opacity-90 max-w-2xl">
+        Manage your account preferences and security settings.
+      </p>
     </div>
   </div>
 
-  <div class="container">
-    <div class="row">
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row gap-6">
 
-      <div class="col-md-3 offset-md-1 mb-3 mb-md-0">
-        <div class="nav flex-column nav-pills text-center" role="tablist">
-          <a
-              class="nav-link active" id="settings-profile-tab" data-bs-toggle="pill"
-              data-bs-target="#profile" role="tab"
-          >{% trans %}Profile{% endtrans %}
-        </a>
-          <a
-              class="nav-link" id="settings-tokens-tab" data-bs-toggle="pill" data-bs-target="#tokens"
-              role="tab"
-          >{% trans %}Access Tokens{% endtrans %}
-      </a>
+      <div class="w-full md:w-64 flex-shrink-0">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+          <div class="p-1">
+            <button
+                class="w-full py-3 px-4 text-left rounded-md transition-colors font-medium text-gray-900 bg-primary-100 border-l-4 border-primary-500" 
+                id="settings-profile-tab"
+                @click="document.getElementById('profile').classList.add('block'); document.getElementById('profile').classList.remove('hidden'); document.getElementById('tokens').classList.add('hidden'); document.getElementById('tokens').classList.remove('block'); this.classList.add('bg-primary-100', 'border-l-4', 'border-primary-500'); this.classList.remove('hover:bg-gray-100'); document.getElementById('settings-tokens-tab').classList.remove('bg-primary-100', 'border-l-4', 'border-primary-500'); document.getElementById('settings-tokens-tab').classList.add('hover:bg-gray-100');"
+                role="tab"
+            >
+              <span class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                {% trans %}Profile{% endtrans %}
+              </span>
+            </button>
+            
+            <button
+                class="w-full py-3 px-4 text-left rounded-md transition-colors font-medium text-gray-700 hover:bg-gray-100" 
+                id="settings-tokens-tab"
+                @click="document.getElementById('tokens').classList.add('block'); document.getElementById('tokens').classList.remove('hidden'); document.getElementById('profile').classList.add('hidden'); document.getElementById('profile').classList.remove('block'); this.classList.add('bg-primary-100', 'border-l-4', 'border-primary-500'); this.classList.remove('hover:bg-gray-100'); document.getElementById('settings-profile-tab').classList.remove('bg-primary-100', 'border-l-4', 'border-primary-500'); document.getElementById('settings-profile-tab').classList.add('hover:bg-gray-100');"
+                role="tab"
+            >
+              <span class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+                {% trans %}Access Tokens{% endtrans %}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="col-md-8">
+      <div class="flex-1">
         <div class="tab-content" id="v-pills-tabContent">
-          <div class="tab-pane fade show active" id="profile" role="tabpanel">
+          <div class="block" id="profile" role="tabpanel">
             {% include "components/errors.html" %}
 
             {% with form = Forms.self.SettingsForm(language=language, country=country) %}
@@ -38,216 +60,274 @@
                   method="post" accept-charset="utf-8" autocomplete="off" role="form"
                   x-data="SettingsForm"
                   @submit.prevent="updateProfile()"
-                  class="form-horizontal"
+                  class="bg-white shadow-sm rounded-lg p-6"
               >
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">{% trans %}Profile Information{% endtrans %}</h2>
 
-                <div class="mb-3">
-                  <b>{{ form.name.label(class="form-label") }}</b>
-                  {{ form.name(class="form-control", value=name) }}
+                <div class="mb-5">
+                  <label for="{{ form.name.id }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.name.label.text }}</label>
+                  {{ form.name(class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition duration-200", value=name) }}
                 </div>
 
-                <div class="mb-3">
-                  <b>{{ form.email.label(class="form-label") }}</b>
-                  {{ form.email(class="form-control", value=email) }}
+                <div class="mb-5">
+                  <label for="{{ form.email.id }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.email.label.text }}</label>
+                  {{ form.email(class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition duration-200", value=email) }}
                 </div>
 
-                <div class="mb-3">
-                  <b>{{ form.language.label(class="form-label") }}</b>
-                  {{ form.language(class="form-select", value=language) }}
+                <div class="mb-5">
+                  <label for="{{ form.language.id }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.language.label.text }}</label>
+                  {{ form.language(class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition duration-200", value=language) }}
                 </div>
 
-                <hr>
-
-                <div class="mb-3">
-                  <b>{{ form.confirm.label(class="form-label") }}</b>
-                  {{ form.confirm(class="form-control") }}
-                </div>
-                <div class="mb-3">
-                  <b>{{ form.password.label(class="form-label") }}</b>
-                  {{ form.password(class="form-control") }}
+                <div class="my-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+                  <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">{% trans %}Change Password{% endtrans %}</h3>
                 </div>
 
-                <hr>
-
-                <div class="mb-3">
-                  <b>{{ form.affiliation.label(class="form-label") }}</b>
-                  {{ form.affiliation(class="form-control", value=affiliation or "") }}
+                <div class="mb-5">
+                  <label for="{{ form.confirm.id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ form.confirm.label.text }}</label>
+                  {{ form.confirm(class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition duration-200") }}
                 </div>
-                <div class="mb-3">
-                  <b>{{ form.website.label(class="form-label") }}</b>
-                  {{ form.website(class="form-control", value=website or "") }}
-                </div>
-                <div class="mb-3">
-                  <b>{{ form.country.label(class="form-label") }}</b>
-                  {{ form.country(class="form-select", value=country) }}
+                <div class="mb-5">
+                  <label for="{{ form.password.id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ form.password.label.text }}</label>
+                  {{ form.password(class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition duration-200") }}
                 </div>
 
-                <hr>
+                <div class="my-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+                  <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">{% trans %}Personal Information{% endtrans %}</h3>
+                </div>
+
+                <div class="mb-5">
+                  <label for="{{ form.affiliation.id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ form.affiliation.label.text }}</label>
+                  {{ form.affiliation(class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition duration-200", value=affiliation or "") }}
+                </div>
+                <div class="mb-5">
+                  <label for="{{ form.website.id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ form.website.label.text }}</label>
+                  {{ form.website(class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition duration-200", value=website or "") }}
+                </div>
+                <div class="mb-5">
+                  <label for="{{ form.country.id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ form.country.label.text }}</label>
+                  {{ form.country(class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition duration-200 appearance-none bg-no-repeat bg-[right_0.5rem_center] bg-[0.75em]", value=country) }}
+                </div>
+
+                <div class="my-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+                  <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">{% trans %}Additional Information{% endtrans %}</h3>
+                </div>
 
                 {{ render_extra_fields(form.extra) }}
 
-                <div id="results" class="mb-3">
+                <div id="results" class="mb-5">
                   <div
-                      class="alert alert-success alert-dismissible submit-row" role="alert"
-                      x-cloak="success" x-show="success"
+                      class="p-4 mb-4 text-sm text-green-700 bg-green-100 dark:bg-green-800/30 dark:text-green-200 rounded-lg" 
+                      role="alert"
+                      x-cloak x-show="success"
                   >
-                    <strong>Success!</strong>
+                    <span class="font-medium">{% trans %}Success!{% endtrans %}</span>
                     {% trans %}Your profile has been updated{% endtrans %}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                    <button type="button" class="float-right" aria-label="Close" @click="success = false">
+                      <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                      </svg>
                     </button>
                   </div>
 
 
                   <template x-for="(msg, idx) in errors" :key="idx">
-                    <div class="alert alert-danger alert-dismissible" role="alert">
-                      <span class="sr-only">{% trans %}Error:{% endtrans %}</span>
-                      <span x-text="msg"></span>
-                      <button
-                          type="button" class="btn-close" data-bs-dismiss="alert"
-                          aria-label="Close"
-                      >
-                      </button>
+                    <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 dark:bg-red-800/30 dark:text-red-200 rounded-lg" role="alert">
+                      <div class="flex">
+                        <div class="flex-shrink-0">
+                          <svg class="h-5 w-5 text-red-700 dark:text-red-200" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                          </svg>
+                        </div>
+                        <div class="ml-3">
+                          <span x-text="msg"></span>
+                        </div>
+                        <div class="ml-auto pl-3">
+                          <div class="-mx-1.5 -my-1.5">
+                            <button type="button" class="text-red-700 dark:text-red-200 rounded" @click="errors = errors.filter(e => e !== msg)">
+                              <span class="sr-only">{% trans %}Dismiss{% endtrans %}</span>
+                              <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </template>
                 </div>
 
-                <div class="mb-3">
-                  {{ form.submit(class="btn btn-primary float-end px-4") }}
+                <div class="mt-8 flex justify-end">
+                  {{ form.submit(class="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-md shadow-sm transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500") }}
                 </div>
               </form>
             {% endwith %}
           </div>
 
-          <div class="tab-pane fade" id="tokens" role="tabpanel">
+          <div class="hidden" id="tokens" role="tabpanel">
 
             {% with form = Forms.self.TokensForm() %}
-              <form method="POST" x-data="TokensForm" @submit.prevent="generateToken()" class="mb-3">
-                <div class="modal fade" tabindex="-1" x-ref="tokenModal">
-                  <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title">{% trans %}API Key Generated{% endtrans %}</h5>
+              <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">{% trans %}API Access Tokens{% endtrans %}</h2>
+                <p class="mb-4 text-gray-600">{% trans %}Generate API tokens to interact programmatically with the CTF platform.{% endtrans %}</p>
+                
+                <form method="POST" x-data="TokensForm" @submit.prevent="generateToken()" class="mb-3">
+                  <div class="fixed inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 hidden" x-ref="tokenModal" x-show="showModal" x-cloak>
+                    <div class="bg-white rounded-lg shadow-xl max-w-lg w-full">
+                      <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                        <h3 class="text-lg font-medium text-gray-900">{% trans %}API Key Generated{% endtrans %}</h3>
                         <button
-                            type="button" class="btn-close" data-bs-dismiss="modal"
+                            type="button" class="text-gray-400 hover:text-gray-500" 
+                            @click="hideModal()"
                             aria-label="Close"
-                        ></button>
+                        >
+                          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                          </svg>
+                        </button>
                       </div>
 
-                      <div class="modal-body">
-                        <p>{% trans %}Please copy your API Key, it won't be shown again!{% endtrans %}</p>
+                      <div class="p-6">
+                        <div class="mb-4 p-3 bg-yellow-50 text-yellow-800 rounded-md flex items-start">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                          </svg>
+                          <p>{% trans %}Please copy your API Key, it won't be shown again!{% endtrans %}</p>
+                        </div>
 
-                        <div class="input-group mb-3">
+                        <div class="flex w-full mb-3">
                           <input
-                              type="text" class="form-control bg-white" x-ref="token"
-                              x-model="token" readonly
+                              type="text" 
+                              class="flex-grow px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition duration-200" 
+                              x-ref="token"
+                              x-model="token" 
+                              readonly
                           >
                           <button
-                              class="btn btn-outline-secondary px-3" type="button"
+                              class="px-4 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 border-l-0 rounded-r-md hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-200" 
+                              type="button"
                               @click="copyToken()"
                           >
-                            <i class="fas fa-clipboard"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                            </svg>
                           </button>
                         </div>
                       </div>
 
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-                          Got it!
+                      <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+                        <button 
+                          type="button" 
+                          class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white font-medium rounded-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+                          @click="hideModal()"
+                        >
+                          {% trans %}Got it!{% endtrans %}
                         </button>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div class="mb-3">
-                  <b>{{ form.expiration.label(class="form-label") }}</b>
-                  {{ form.expiration(class="form-control") }}
+                <div class="mb-5">
+                  <label for="{{ form.expiration.id }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.expiration.label.text }}</label>
+                  {{ form.expiration(class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition duration-200") }}
                 </div>
 
-                <div class="mb-3">
-                  <b>{{ form.description.label(class="form-label") }}</b>
-                  {{ form.description(class="form-control", rows="3") }}
+                <div class="mb-5">
+                  <label for="{{ form.description.id }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.description.label.text }}</label>
+                  {{ form.description(class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition duration-200", rows="3") }}
                 </div>
 
-                <div class="row">
-                  <div class="col">
-                    {{ form.submit(class="btn btn-block btn-primary float-end px-4") }}
-                  </div>
+                <div class="flex justify-end">
+                  {{ form.submit(class="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-md shadow-sm transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500") }}
                 </div>
               </form>
-            {% endwith %}
+            {% endwith %}              {% if tokens %}
+              <div class="bg-white shadow-sm rounded-lg p-6 mt-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">{% trans %}Active Tokens{% endtrans %}</h3>
 
-            {% if tokens %}
-              <hr>
-
-              <h4 class="text-center mt-3">{% trans %}Active Tokens{% endtrans %}</h4>
-
-              {# This has to be wrapping the table modal, because div with modal will get pushed out
-                 of the table and alpine ref will not work #}
-              <div x-data="Tokens">
-                <div
-                    class="modal fade" x-ref="confirmModal" tabindex="-1" role="dialog"
-                    aria-modal="true"
-                >
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title">{% trans %}Delete Token{% endtrans %}</h5>
+                {# This has to be wrapping the table modal, because div with modal will get pushed out
+                   of the table and alpine ref will not work #}
+                <div x-data="Tokens">
+                  <!-- Delete Token Modal -->
+                  <div
+                      class="fixed inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 hidden"
+                      x-ref="confirmModal"
+                      x-show="showDeleteModal"
+                      x-cloak
+                  >
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
+                      <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">{% trans %}Delete Token{% endtrans %}</h3>
                         <button
-                            type="button" class="btn-close" data-bs-dismiss="modal"
+                            type="button" class="text-gray-400 hover:text-gray-500" 
+                            @click="showDeleteModal = false"
                             aria-label="Close"
                         >
+                          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                          </svg>
                         </button>
                       </div>
 
-                      <div class="modal-body">
-                        <p>{% trans %}Are you sure you want to delete this token?{% endtrans %}</p>
+                      <div class="p-6">
+                        <p class="text-gray-700 dark:text-gray-300">{% trans %}Are you sure you want to delete this token?{% endtrans %}</p>
                       </div>
 
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
-                          No
+                      <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3">
+                        <button 
+                          type="button" 
+                          class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-md transition duration-200"
+                          @click="showDeleteModal = false"
+                        >
+                          {% trans %}Cancel{% endtrans %}
                         </button>
                         <button
-                            type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                            type="button" 
+                            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                             @click="deleteSelectedToken()"
-                        >Yes
+                        >
+                          {% trans %}Delete{% endtrans %}
                         </button>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <table class="table table-striped align-middle">
-                  <thead>
-                  <tr>
-                    <th class="text-center">{% trans %}Created{% endtrans %}</th>
-                    <th>{% trans %}Expiration{% endtrans %}</th>
-                    <th>{% trans %}Description{% endtrans %}</th>
-                    <th>{% trans %}Delete{% endtrans %}</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {% for token in tokens %}
-                    <tr x-ref="token-{{ token.id }}">
-                      <td class="text-center">
-                        <span data-time="{{ token.created | isoformat }}"></span>
-                      </td>
-                      <td>
-                        <span data-time="{{ token.expiration | isoformat }}"></span>
-                      </td>
-                      <td>
-                        <span>{{ token.description | default('', true) }}</span>
-                      </td>
-                      <td class="text-center">
-                        <span
-                            class="delete-token" role="button"
-                            @click="deleteTokenModal({{ token.id }})">
-                            <i class="cursor-pointer fas fa-times"></i>
-                        </span>
-                      </td>
-                    </tr>
-                  {% endfor %}
+                  <div class="overflow-x-auto">
+                    <table class="w-full">
+                      <thead>
+                        <tr class="bg-gray-50 dark:bg-gray-900 text-left">
+                          <th class="px-6 py-3 text-gray-700 dark:text-gray-300 font-semibold text-center">{% trans %}Created{% endtrans %}</th>
+                          <th class="px-6 py-3 text-gray-700 dark:text-gray-300 font-semibold">{% trans %}Expiration{% endtrans %}</th>
+                          <th class="px-6 py-3 text-gray-700 dark:text-gray-300 font-semibold">{% trans %}Description{% endtrans %}</th>
+                          <th class="px-6 py-3 text-gray-700 dark:text-gray-300 font-semibold text-center">{% trans %}Actions{% endtrans %}</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        {% for token in tokens %}
+                          <tr x-ref="token-{{ token.id }}" class="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
+                            <td class="px-6 py-4 text-center text-gray-700 dark:text-gray-300">
+                              <span data-time="{{ token.created | isoformat }}" class="whitespace-nowrap"></span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-700 dark:text-gray-300">
+                              <span data-time="{{ token.expiration | isoformat }}" class="whitespace-nowrap"></span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-700 dark:text-gray-300">
+                              {{ token.description | default('—', true) }}
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                              <button
+                                  class="p-1 rounded-full text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30"
+                                  @click="deleteTokenModal({{ token.id }})"
+                                  title="{% trans %}Delete Token{% endtrans %}"
+                              >
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                </svg>
+                              </button>
+                            </td>
+                          </tr>
+                        {% endfor %}
 
                   </tbody>
                 </table>

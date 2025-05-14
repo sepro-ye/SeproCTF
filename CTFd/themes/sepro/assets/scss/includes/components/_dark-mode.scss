@@ -1,0 +1,68 @@
+/* Dark mode specific styles
+-------------------------------------------------- */
+
+/* Dark mode card styles */
+.dark .card {
+  @apply bg-dark-800 border-dark-700 shadow-lg;
+}
+
+/* Custom scrollbar for dark mode */
+.dark ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  @apply bg-dark-900;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-dark-700 rounded-md;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-700;
+}
+
+/* Form control overrides for dark mode */
+.dark .form-control {
+  @apply bg-dark-800 border-dark-700 text-gray-200;
+}
+
+.dark .form-control:focus {
+  @apply border-primary-600 ring-primary-500 bg-dark-900;
+}
+
+.dark .form-select {
+  @apply bg-dark-800 border-dark-700 text-gray-200;
+}
+
+/* Table overrides for dark mode */
+.dark .table-modern thead {
+  @apply bg-dark-800;
+}
+
+.dark .table-modern th {
+  @apply text-gray-300 border-dark-700;
+}
+
+.dark .table-modern td {
+  @apply text-gray-300 border-dark-700;
+}
+
+.dark .table-modern tbody {
+  @apply bg-dark-900 divide-dark-700;
+}
+
+.dark .table-modern tbody tr:hover {
+  @apply bg-dark-800;
+}
+
+/* Challenge and code display styles for dark mode */
+.dark pre {
+  @apply bg-dark-800 border border-dark-700 rounded-lg p-4 text-gray-300;
+}
+
+.dark code {
+  @apply bg-dark-800 text-gray-300 p-1 rounded-md;
+}
