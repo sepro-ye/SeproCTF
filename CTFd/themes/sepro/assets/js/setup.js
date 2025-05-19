@@ -71,8 +71,33 @@ Alpine.data("SetupForm", () => ({
     }
 
     let target = e.target.dataset.href;
-    let tab = this.$root.querySelector(`[data-bs-target="${target}"]`);
-    Tab.getOrCreateInstance(tab).show();
+    
+    // Find the tab by href instead of data-bs-target
+    let tab = this.$root.querySelector(`a[href="${target}"][role="tab"]`);
+    
+    if (tab) {
+      // Manually handle tab switching instead of using Tab class
+      // Hide all tab panes
+      document.querySelectorAll('.tab-pane').forEach(pane => {
+        pane.classList.remove('active');
+        pane.classList.add('hidden');
+      });
+      
+      // Remove active state from all tabs
+      document.querySelectorAll('a[role="tab"]').forEach(t => {
+        t.classList.remove('active', 'border-primary-500');
+      });
+      
+      // Show the target tab pane
+      let targetPane = document.querySelector(target);
+      if (targetPane) {
+        targetPane.classList.remove('hidden');
+        targetPane.classList.add('active');
+      }
+      
+      // Mark the tab as active
+      tab.classList.add('active', 'border-b-2', 'border-primary-500');
+    }
   },
 
   setThemeColor(e) {
