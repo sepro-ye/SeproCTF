@@ -1,11 +1,32 @@
 <div class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" x-data="Challenge" x-init="id = {{ challenge.id }}; max_attempts = {{ max_attempts }}; attempts = {{ attempts }}">
-  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeModal()"></div>
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeModal()"></div>
   
-  <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden">
+  <!-- Confetti celebration container -->
+  <div class="confetti-container">
+    <template x-for="i in 50">
+      <div class="confetti" 
+           :style="{
+             left: Math.random() * 100 + '%',
+             top: -20 + 'px',
+             transform: 'scale(' + (Math.random() * 0.6 + 0.4) + ')',
+             animation: 'confetti-fall ' + (Math.random() * 2 + 2) + 's linear forwards',
+             animationDelay: Math.random() * 3 + 's'
+           }"></div>
+    </template>
+  </div>
+  
+  <div class="challenge-modal relative bg-gradient-to-br from-dark-900 to-dark-800 rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden border border-primary-700/30">
     <!-- Header -->
-    <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
-      <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ challenge.name }}</h2>
-      <button type="button" @click="closeModal()" class="text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200">
+    <div class="relative flex justify-between items-center p-6 border-b border-primary-700/30 bg-dark-900/70 backdrop-blur-sm">
+      <!-- Decorative elements -->
+      <div class="absolute inset-0 bg-cyber-grid opacity-10 z-0"></div>
+      <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary-500/50 to-transparent"></div>
+      
+      <h2 class="text-2xl font-bold text-white flex items-center z-10">
+        <span class="text-primary-400 mr-2"><i class="fas fa-shield-alt"></i></span>
+        {{ challenge.name }}
+      </h2>
+      <button type="button" @click="closeModal()" class="z-10 text-gray-400 hover:text-primary-300 p-2 rounded-full hover:bg-dark-700/50 transition-colors">
         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
         </svg>
@@ -13,25 +34,35 @@
     </div>
 
     <!-- Tab Navigation -->
-    <div class="border-b border-gray-200 dark:border-gray-700 px-6">
+    <div class="border-b border-primary-700/20 px-6 bg-dark-800/50">
       <div class="flex space-x-8">
         <button 
           @click="activeTab = 'challenge'" 
-          :class="{'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400': activeTab === 'challenge', 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300': activeTab !== 'challenge'}" 
-          class="py-4 px-1 font-medium text-sm transition-colors"
+          :class="{
+            'border-b-2 border-primary-500 text-primary-400 relative': activeTab === 'challenge', 
+            'text-gray-400 hover:text-primary-300': activeTab !== 'challenge'
+          }" 
+          class="py-4 px-3 font-medium text-sm transition-all duration-300 category-filter"
         >
+          <i class="fas fa-puzzle-piece mr-2"></i>
           {% trans %}Challenge{% endtrans %}
+          <div x-show="activeTab === 'challenge'" class="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-primary-500 to-transparent transition-all duration-300"></div>
         </button>
 
         {% block solves %}
         <button 
           @click="showSolves(); activeTab = 'solves'" 
-          :class="{'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400': activeTab === 'solves', 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300': activeTab !== 'solves'}" 
-          class="py-4 px-1 font-medium text-sm transition-colors"
+          :class="{
+            'border-b-2 border-primary-500 text-primary-400 relative': activeTab === 'solves', 
+            'text-gray-400 hover:text-primary-300': activeTab !== 'solves'
+          }" 
+          class="py-4 px-3 font-medium text-sm transition-all duration-300 flex items-center category-filter"
         >
+          <i class="fas fa-users mr-2"></i>
           {% if solves != None %}
             {{ ngettext("%(num)d Solve", "%(num)d Solves", solves) }}
           {% endif %}
+          <div x-show="activeTab === 'solves'" class="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-primary-500 to-transparent transition-all duration-300"></div>
         </button>
         {% endblock %}
       </div>
@@ -40,11 +71,15 @@
     <!-- Content Area -->
     <div class="p-6 overflow-y-auto" style="max-height: calc(90vh - 150px);">
       <!-- Challenge Tab -->
-      <div x-show="activeTab === 'challenge' || !activeTab" class="space-y-6">
+      <div x-show="activeTab === 'challenge' || !activeTab" class="space-y-6 challenge-section" 
+           :class="{'entering': activeTab === 'challenge', 'entered': activeTab === 'challenge'}"
+           x-transition:enter="transition ease-out duration-300"
+           x-transition:enter-start="opacity-0 transform translate-y-4"
+           x-transition:enter-end="opacity-100 transform translate-y-0"
         <!-- Challenge Value -->
         <div class="flex justify-center">
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
-            {{ challenge.value }}
+          <span class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-primary-900/60 text-primary-300 shadow-glow border border-primary-700/30 backdrop-blur-sm">
+            <i class="fas fa-star mr-2"></i>{{ challenge.value }} points
           </span>
         </div>
 
@@ -53,7 +88,9 @@
           <div class="flex flex-wrap justify-center gap-2">
             {% block tags %}
               {% for tag in tags %}
-                <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">{{ tag }}</span>
+                <span class="challenge-badge px-3 py-1.5 rounded-full text-xs font-medium bg-dark-700 text-primary-400 border border-primary-700/30 flex items-center">
+                  <i class="fas fa-tag mr-1.5"></i>{{ tag }}
+                </span>
               {% endfor %}
             {% endblock %}
           </div>
@@ -67,7 +104,9 @@
         {% endif %}
 
         <!-- Challenge Description -->
-        <div class="prose dark:prose-invert max-w-none">
+        <div class="prose dark:prose-invert max-w-none px-4 py-5 bg-dark-800/40 rounded-xl border border-primary-800/20 backdrop-blur-sm">
+          <div class="cyber-corner-tl"></div>
+          <div class="cyber-corner-br"></div>
           {% block description %}{{ challenge.html }}{% endblock %}
         </div>
 
@@ -161,9 +200,18 @@
         </template>
 
         <!-- Flag Submission Form -->
-        <div>
+        <div class="relative p-5 bg-dark-800/40 rounded-xl border border-primary-800/20 backdrop-blur-sm">
+          <div class="cyber-corner-bl"></div>
+          <div class="cyber-corner-tr"></div>
+          
+          <!-- Title -->
+          <div class="mb-3 flex items-center">
+            <i class="fas fa-flag text-primary-500 mr-2"></i>
+            <span class="text-primary-300 font-semibold">{% trans %}Submit Flag{% endtrans %}</span>
+          </div>
+          
           <div class="flex flex-col sm:flex-row gap-3">
-            <div class="flex-grow">
+            <div class="flex-grow relative">
               <input
                 id="challenge-id" 
                 type="hidden"
@@ -171,20 +219,33 @@
               >
               <input
                 id="challenge-input"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+                class="flag-input w-full px-4 py-2 border border-dark-600 rounded-lg shadow-inner focus:ring-2 focus:ring-primary-500/40 focus:border-primary-500/40 bg-dark-900/60 text-white placeholder-gray-500"
+                :class="{
+                  'correct': response && response.data.status === 'correct',
+                  'incorrect': response && response.data.status === 'incorrect'
+                }"
                 type="text"
                 name="submission"
                 @keyup.enter="submitChallenge()"
-                placeholder="{% trans %}Flag{% endtrans %}"
+                placeholder="{% trans %}Enter flag here...{% endtrans %}"
                 x-model="submission"
               >
+              <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <template x-if="response && response.data.status === 'correct'">
+                  <i class="fas fa-check-circle text-green-500"></i>
+                </template>
+                <template x-if="response && response.data.status === 'incorrect'">
+                  <i class="fas fa-times-circle text-red-500"></i>
+                </template>
+              </div>
             </div>
             <button
               id="challenge-submit"
-              class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              class="challenge-submit px-5 py-2 bg-gradient-to-r from-primary-700 to-primary-600 hover:from-primary-600 hover:to-primary-500 text-white rounded-lg shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 flex items-center justify-center border border-primary-500/20"
               type="submit"
               @click.debounce.500ms="submitChallenge()"
             >
+              <i class="fas fa-paper-plane mr-2"></i>
               {% trans %}Submit{% endtrans %}
             </button>
           </div>
@@ -193,24 +254,29 @@
         <!-- Response Messages -->
         <div>
           <template x-if="response">
-            <div class="p-4 rounded-lg text-center"
+            <div class="p-4 rounded-lg text-center mt-4 border backdrop-blur-sm challenge-solved-animation"
                 :class="{
-                  'bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400': response.data.status == 'correct',
-                  'bg-blue-100 text-blue-800 dark:bg-blue-800/20 dark:text-blue-400': response.data.status == 'already_solved',
-                  'bg-red-100 text-red-800 dark:bg-red-800/20 dark:text-red-400': response.data.status == 'incorrect',
-                  'bg-amber-100 text-amber-800 dark:bg-amber-800/20 dark:text-amber-400': response.data.status == 'paused',
+                  'bg-green-900/20 text-green-400 border-green-700/30': response.data.status == 'correct',
+                  'bg-blue-900/20 text-blue-400 border-blue-700/30': response.data.status == 'already_solved',
+                  'bg-red-900/20 text-red-400 border-red-700/30': response.data.status == 'incorrect',
+                  'bg-amber-900/20 text-amber-400 border-amber-700/30': response.data.status == 'paused',
                 }"
             >
               <strong x-text="response.data.message"></strong>
               
               <!-- Next Challenge & Share options -->
-              <div x-show="(response.data.status == 'correct' || response.data.status == 'already_solved')" class="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <div x-show="(response.data.status == 'correct' || response.data.status == 'already_solved')" 
+                   class="mt-4 flex flex-col sm:flex-row items-center justify-center gap-3"
+                   x-transition:enter="transition ease-out duration-300"
+                   x-transition:enter-start="opacity-0 transform scale-95"
+                   x-transition:enter-end="opacity-100 transform scale-100">
                 <button 
                   x-show="getNextId()" 
                   @click="nextChallenge()" 
-                  class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  class="px-4 py-2 bg-gradient-to-r from-primary-700 to-primary-600 hover:from-primary-600 hover:to-primary-500 text-white rounded-lg shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 flex items-center border border-primary-500/20"
                 >
-                  {% trans %}Next Challenge{% endtrans %}
+                  <span>{% trans %}Next Challenge{% endtrans %}</span>
+                  <i class="fas fa-arrow-right ml-2"></i>
                 </button>
                 
                 {% if Configs.social_shares %}
@@ -262,15 +328,24 @@
       </div>
 
       <!-- Solves Tab -->
-      <div x-show="activeTab === 'solves'" class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-900">
+      <div x-show="activeTab === 'solves'" class="overflow-x-auto challenge-section"
+           x-transition:enter="transition ease-out duration-300"
+           x-transition:enter-start="opacity-0 transform translate-y-4"
+           x-transition:enter-end="opacity-100 transform translate-y-0">
+        <div class="mb-4 p-4 bg-dark-800/40 rounded-lg border border-primary-800/20">
+          <div class="flex items-center text-primary-300">
+            <i class="fas fa-trophy mr-2"></i>
+            <span class="font-semibold">{% trans %}Challenge Solves{% endtrans %}</span>
+          </div>
+        </div>
+        <table class="min-w-full divide-y divide-dark-700 solves-table bg-dark-800/40 rounded-lg overflow-hidden border border-primary-800/20">
+          <thead class="bg-dark-900/60">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{% trans %}Name{% endtrans %}</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{% trans %}Date{% endtrans %}</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-primary-400 uppercase tracking-wider">{% trans %}Name{% endtrans %}</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-primary-400 uppercase tracking-wider">{% trans %}Date{% endtrans %}</th>
             </tr>
           </thead>
-          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody class="divide-y divide-dark-700/50">
             <template x-for="solve in solves" :key="solve.account_id">
               <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">

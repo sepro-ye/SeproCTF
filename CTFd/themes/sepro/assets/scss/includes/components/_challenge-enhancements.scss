@@ -1,0 +1,453 @@
+/* Enhanced challenge UI components for SeproCTF
+-------------------------------------------------- */
+
+/* Enhanced challenge card styling */
+.challenge-card {
+  transform: translateY(0);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+  
+  /* Pulse effect for new challenges */
+  &.new-challenge::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 10px;
+    height: 10px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    z-index: 1;
+  }
+  
+  /* Additional hover effects */
+  &:hover .challenge-icon {
+    transform: scale(1.1);
+  }
+}
+
+/* Challenge icon container */
+.challenge-icon {
+  transition: all 0.3s ease;
+}
+
+/* Difficulty meter enhancements */
+.difficulty-meter {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  transition: all 0.2s ease;
+  
+  .difficulty-dot {
+    transition: all 0.3s ease;
+    transform-origin: center;
+    
+    &.active {
+      transform: scale(1.2);
+    }
+  }
+}
+
+/* Badge enhancements */
+.challenge-badge {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* Category filters enhancement */
+.category-filter {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.8), transparent);
+    transition: width 0.3s ease;
+  }
+  
+  &:hover::after,
+  &.active::after {
+    width: 100%;
+  }
+  
+  &.active {
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      background-color: rgba(16, 185, 129, 0.8);
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+  }
+}
+
+/* Enhanced modal styles */
+.challenge-modal {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &.entering {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  
+  &.entered {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  &.exiting {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* Section transitions for modal content */
+.challenge-section {
+  transition: all 0.2s ease;
+  
+  &.entering {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  
+  &.entered {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Submit button enhancement */
+.challenge-submit {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      60deg,
+      rgba(255, 255, 255, 0) 10%,
+      rgba(255, 255, 255, 0.1) 30%,
+      rgba(255, 255, 255, 0) 50%
+    );
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: all 0.6s ease;
+  }
+  
+  &:hover::after {
+    opacity: 1;
+    left: 100%;
+  }
+}
+
+/* Success animation for correct submission */
+@keyframes success-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* Shake animation for incorrect submission */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Confetti animation */
+@keyframes confetti-fall {
+  0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(600px) rotate(360deg); opacity: 0; }
+}
+
+.challenge-solved-animation {
+  animation: success-pulse 1.5s ease-out;
+}
+
+.shake-animation {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* Flag input enhancements */
+.flag-input {
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  
+  &.correct {
+    border-color: rgba(16, 185, 129, 0.7) !important;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2) !important;
+    animation: success-pulse 1s ease-out;
+  }
+  
+  &.incorrect {
+    border-color: rgba(239, 68, 68, 0.7) !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+  }
+}
+
+/* Confetti container */
+.confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  overflow: hidden;
+  display: none;
+  
+  &.active {
+    display: block;
+  }
+  
+  .confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #10b981;
+    opacity: 0;
+    
+    &:nth-child(odd) {
+      background-color: #3b82f6;
+    }
+    
+    &:nth-child(3n) {
+      background-color: #f97316;
+    }
+    
+    &:nth-child(4n) {
+      background-color: #a855f7;
+    }
+  }
+}
+
+/* Hint cards enhancements */
+.hint-card {
+  transition: all 0.3s ease;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  
+  &:hover {
+    border-color: rgba(16, 185, 129, 0.4);
+  }
+}
+
+/* Hint content transition */
+.hint-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.hint-content.open {
+  max-height: 500px;
+}
+
+/* File download buttons */
+.file-download {
+  position: relative;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-1px);
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    transition: all 0.6s ease;
+  }
+  
+  &:hover::after {
+    left: 100%;
+  }
+}
+
+/* Challenge completion badge */
+.completion-badge {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(15deg);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Cyber corners */
+.cyber-corner-tl {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid rgba(16, 185, 129, 0.7);
+  border-left: 2px solid rgba(16, 185, 129, 0.7);
+  z-index: 10;
+}
+
+.cyber-corner-tr {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid rgba(16, 185, 129, 0.7);
+  border-right: 2px solid rgba(16, 185, 129, 0.7);
+  z-index: 10;
+}
+
+.cyber-corner-bl {
+  position: absolute;
+  bottom: -2px;
+  left: -2px;
+  width: 12px;
+  height: 12px;
+  border-bottom: 2px solid rgba(16, 185, 129, 0.7);
+  border-left: 2px solid rgba(16, 185, 129, 0.7);
+  z-index: 10;
+}
+
+.cyber-corner-br {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  border-bottom: 2px solid rgba(16, 185, 129, 0.7);
+  border-right: 2px solid rgba(16, 185, 129, 0.7);
+  z-index: 10;
+}
+
+/* Score value animation */
+@keyframes score-entrance {
+  0% { opacity: 0; transform: translateY(5px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes score-glow {
+  0% { text-shadow: 0 0 10px rgba(16, 185, 129, 0.15); }
+  50% { text-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+  100% { text-shadow: 0 0 10px rgba(16, 185, 129, 0.15); }
+}
+
+.score-value {
+  position: relative;
+  background: linear-gradient(to right, #10b981, #3b82f6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+  transition: all 0.3s ease;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, rgba(16, 185, 129, 0.3), rgba(59, 130, 246, 0.3));
+    border-radius: 1px;
+  }
+  
+  &:hover {
+    transform: translateY(-1px);
+    text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+  }
+  
+  &.animate-in {
+    animation: score-entrance 0.5s ease-out forwards, score-glow 2s ease-in-out infinite 0.5s;
+  }
+}
+
+/* Progress bar animation */
+.progress-bar {
+  transition: width 1s ease-in-out;
+}
+
+/* Dashboard grid layout improvements */
+.challenges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  
+  @media (min-width: 1280px) {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+/* Challenge type icons */
+.challenge-type-icon {
+  transition: all 0.3s ease;
+}
+
+/* Empty state styling */
+.empty-state {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(148, 163, 184, 0.7);
+  border: 2px dashed rgba(16, 185, 129, 0.2);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+  
+  svg {
+    opacity: 0.5;
+    margin-bottom: 1rem;
+  }
+}
